@@ -1,0 +1,1199 @@
+{
+  "profile": {
+    "legal_name": "Kavach Financial Technologies Private Limited",
+    "trading_name": "KavachPay",
+    "sector": "Financial services — consumer lending, UPI payments and prepaid instruments",
+    "registered_office": "Level 7, Prestige Zeta, Whitefield Main Road, Bengaluru 560066, Karnataka, India",
+    "headcount": 1180,
+    "data_principal_count": 14200000,
+    "business_description": "KavachPay operates a consumer financial services platform in India comprising a UPI payments application, an unsecured personal and consumer-durable lending business originated digitally and co-lent with two partner NBFCs, a prepaid payment instrument wallet, and 'Kavach Junior', a supervised prepaid card and savings product marketed to 13-17 year olds under a parent's account. Onboarding is fully digital and relies on third-party KYC and bureau services. The entity was notified as a Significant Data Fiduciary and participates in the account aggregator ecosystem as a Financial Information User, receiving financial information through a registered Consent Manager.",
+    "systems_in_scope": [
+      "KavachPay consumer mobile application (Android, iOS) and web onboarding journey",
+      "Kavach Lend — loan origination and underwriting platform (in-house, AWS ap-south-1)",
+      "Kavach Junior — teen prepaid card product and parent supervision console",
+      "Kavach CRM — Salesforce Financial Services Cloud (customer service and collections)",
+      "Kavach Analytics — Snowflake data warehouse and dbt transformation layer",
+      "Kavach Ledger — core wallet and PPI ledger",
+      "Marketing stack — CleverTap (engagement), Meta and Google advertising integrations",
+      "Communications — Exotel (voice), Gupshup (SMS and WhatsApp), Amazon SES (email)",
+      "Identity and KYC — Signzy (video KYC), Karza (document verification), CIBIL and CRIF",
+      "Account aggregator integration via a registered Consent Manager",
+      "Corporate systems — Google Workspace, Darwinbox (HRMS), Freshservice (ITSM)"
+    ],
+    "entities_in_scope": [
+      "Kavach Financial Technologies Private Limited (Data Fiduciary)",
+      "Kavach Collections Services Private Limited (wholly-owned subsidiary, collections)"
+    ],
+    "exclusions": [
+      "Kavach Insurance Broking Private Limited — separate legal entity and consent architecture; scheduled for assessment in the next cycle.",
+      "Physical branch operations of the co-lending partner NBFCs, which are the partners' own Data Fiduciary responsibility.",
+      "Testing of the account aggregator's own systems, which are outside the entity's control; reliance was placed on the Consent Manager's registration status only."
+    ],
+    "flags": {
+      "is_sdf": true,
+      "processes_children_data": true,
+      "processes_employee_data": true,
+      "uses_consent_manager": true,
+      "is_consent_manager": false,
+      "has_pre_commencement_data": true,
+      "regulated_sector": true,
+      "claims_exemption": false,
+      "startup_exempt_s8_3": false,
+      "startup_exempt_s8_7": false,
+      "startup_exempt_s11": false
+    }
+  },
+  "responses": {
+    "APP-01": {
+      "control_id": "APP-01",
+      "score": 3,
+      "finding": "A written applicability analysis dated 12 February 2026 concludes that the entity processes digital personal data within India as a Data Fiduciary and additionally offers goods and services to Data Principals in India from a Singapore-incorporated affiliate. The analysis is sound but has not been revisited since the Kavach Junior launch in April 2026.",
+      "evidence": [
+        "Written applicability assessment or scoping memorandum, dated and owned",
+        "List of legal entities, branches and offshore affiliates that process personal data of individuals in India"
+      ],
+      "evidence_ref": "WP-001",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "APP-02": {
+      "control_id": "APP-02",
+      "score": 2,
+      "finding": "Role determination has been performed for the co-lending arrangements and for the KYC vendors, but not for the marketing stack. CleverTap and the Meta Custom Audiences integration are treated as processors in the vendor register while the contractual terms and the practical control over onward use point to an independent fiduciary role for the advertising platforms. The mischaracterisation understates the notice and consent obligations attaching to those disclosures.",
+      "evidence": [
+        "Activity-level register recording role assumed and the basis for it",
+        "Customer or client contracts supporting a processor characterisation"
+      ],
+      "evidence_ref": "WP-002",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "APP-05": {
+      "control_id": "APP-05",
+      "score": 1,
+      "finding": "The compliance plan carries a single milestone described as 'DPDP readiness' with no linkage to the commencement of individual provisions or to the phasing of the Rules. Management could not demonstrate a mechanism for tracking notifications, so a provision coming into force would not automatically trigger a change in the plan.",
+      "evidence": [
+        "Compliance calendar mapping obligations to commencement dates",
+        "Remediation plan sequenced against those dates"
+      ],
+      "evidence_ref": "WP-003",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRC-01": {
+      "control_id": "BRC-01",
+      "score": 3,
+      "finding": "The incident response procedure defines a personal data breach and correctly captures unauthorised disclosure, acquisition, sharing, use, alteration, destruction and loss of access. The definition is annexed to the security procedure rather than integrated into triage, and the severity matrix used by the on-call team is framed around availability and financial impact only, so a confidentiality-only event scores low and may not escalate.",
+      "evidence": [
+        "Incident procedure reproducing the statutory definition",
+        "Classification criteria distinguishing a personal data breach from other incidents"
+      ],
+      "evidence_ref": "WP-100",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRC-02": {
+      "control_id": "BRC-02",
+      "score": 3,
+      "finding": "Detection is strong for infrastructure and application events. Detection of breaches arising from misuse of legitimate access — the Snowflake exposure at SEC-02 being the clearest example — is not covered by any use case, and the two incidents in the period were both identified through customer complaint rather than monitoring.",
+      "evidence": [
+        "Detection sources including monitoring, processor notification and external reports",
+        "Escalation path with defined timescales to the accountable owner"
+      ],
+      "evidence_ref": "WP-101",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRC-03": {
+      "control_id": "BRC-03",
+      "score": 2,
+      "finding": "The procedure requires intimation to the Board but names neither the form nor the period, both of which are left as 'per applicable law'. Neither of the two incidents in the period was assessed for reportability, and no intimation has ever been prepared or rehearsed. Given that s.8(6) carries the second highest penalty in the Schedule, the absence of an operable mechanism is a material exposure.",
+      "evidence": [
+        "Runbook step with the prescribed timescale and content requirements",
+        "Pre-drafted intimation template covering every prescribed field"
+      ],
+      "evidence_ref": "WP-102",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRC-04": {
+      "control_id": "BRC-04",
+      "score": 2,
+      "finding": "There is no template, channel or owner for intimation to affected Data Principals. The one incident in the period that affected identifiable individuals — 3,400 loan applicants whose data was exposed through a misconfigured partner API — was handled by customer service on a reactive basis, with no proactive intimation and no record of who was told what.",
+      "evidence": [
+        "Capability to derive the affected population from a defined breach scope",
+        "Mass notification mechanism tested at realistic volume"
+      ],
+      "evidence_ref": "WP-103",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRC-05": {
+      "control_id": "BRC-05",
+      "score": 3,
+      "finding": "A breach register is maintained in Freshservice with cause, systems affected and remediation. Entries do not record the categories or volume of personal data affected, or the reportability assessment, both of which would be the first things sought in an inquiry.",
+      "evidence": [
+        "Breach register with classification, reasoning, notification record and remediation",
+        "Reconciliation against security incident tickets"
+      ],
+      "evidence_ref": "WP-104",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRC-06": {
+      "control_id": "BRC-06",
+      "score": 2,
+      "finding": "A tabletop exercise was conducted in October 2025 covering a ransomware scenario. No exercise has tested a personal data breach requiring regulatory and Data Principal intimation. Post-incident actions from the partner API incident remain open six months later with no owner recorded.",
+      "evidence": [
+        "Tabletop or simulation records including a notification-triggering scenario",
+        "After-action report with identified deficiencies and owners"
+      ],
+      "evidence_ref": "WP-105",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRD-01": {
+      "control_id": "BRD-01",
+      "score": 2,
+      "finding": "The entity has experience of responding to RBI inspections and has a regulatory response process, which provides a partial foundation. No owner is designated for Data Protection Board correspondence, and the evidence deficiencies at GOV-07 and CON-07 mean the entity could not currently produce the consent and notice records an inquiry would be most likely to seek.",
+      "evidence": [
+        "Documented procedure for handling Board communications with a named owner",
+        "Evidence repository enabling rapid assembly of compliance artefacts"
+      ],
+      "evidence_ref": "WP-150",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRD-02": {
+      "control_id": "BRD-02",
+      "score": 1,
+      "finding": "Management was not aware of the voluntary undertaking mechanism or that mitigating action and its timeliness are express factors in determining a penalty. The practical significance — that documented prompt remediation of the findings in this report is itself risk mitigation — had not been considered.",
+      "evidence": [
+        "Playbook or briefing covering voluntary undertakings and mitigation factors",
+        "Practice of contemporaneously documenting mitigating action during incidents"
+      ],
+      "evidence_ref": "WP-151",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "BRD-03": {
+      "control_id": "BRD-03",
+      "score": 2,
+      "finding": "A remediation tracker exists and carries 23 open privacy items. Fourteen have no owner, 19 have no target date, and no budget has been allocated for the engineering work that the erasure, consent and withdrawal findings in this report will require. Without funding and ownership the plan is a list rather than a commitment.",
+      "evidence": [
+        "Consolidated remediation plan with owners, dates, funding and status",
+        "Progress reporting to the governance forum"
+      ],
+      "evidence_ref": "WP-152",
+      "owner": "Vikram Shetty, Chief Financial Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CHD-01": {
+      "control_id": "CHD-01",
+      "score": 2,
+      "finding": "Kavach Junior collects date of birth and is designed for 13-17 year olds, so child users are identified within that product. The main KavachPay application relies on a self-declared 18-plus checkbox with no verification, and analysis of KYC data during this assessment identified 1,847 accounts whose bureau or document date of birth indicates the holder is under 18.",
+      "evidence": [
+        "Age determination mechanism with the threshold set at eighteen",
+        "Documented treatment of users whose age is unknown"
+      ],
+      "evidence_ref": "WP-110",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CHD-02": {
+      "control_id": "CHD-02",
+      "score": 2,
+      "finding": "The Kavach Junior journey requires the parent to initiate the account from their own authenticated, KYC-verified session, which is a reasonable foundation. The relationship between parent and child is self-declared and unverified, and the consent captured from the parent is the same bundled consent described at CON-01 rather than a consent directed at the child's data.",
+      "evidence": [
+        "Verification mechanism establishing the adult's identity and their relationship to the child",
+        "Consent artefacts linking parent identity to the specific child record"
+      ],
+      "evidence_ref": "WP-111",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CHD-03": {
+      "control_id": "CHD-03",
+      "score": 0,
+      "finding": "The advertising and analytics SDKs embedded in the KavachPay application are active in the Kavach Junior experience. Testing confirmed that device identifiers and in-app behavioural events for accounts flagged as minors are transmitted to CleverTap and to the Meta SDK, and that those accounts are eligible for inclusion in lookalike audiences. Children are therefore subject to tracking, behavioural monitoring and targeted advertising. The prohibition is absolute and is not cured by the parental consent obtained, and the conduct engages the third highest penalty entry in the Schedule.",
+      "evidence": [
+        "Technical suppression of tracking, profiling and ad targeting for child accounts",
+        "Test evidence from a child-flagged account showing no profiling calls"
+      ],
+      "evidence_ref": "WP-112",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CHD-04": {
+      "control_id": "CHD-04",
+      "score": 2,
+      "finding": "No assessment of detrimental effect on children's wellbeing has been performed for Kavach Junior. Features that warrant such an assessment — spending streak rewards, peer comparison of savings, and push notifications timed to school hours — were designed without privacy or wellbeing review, consistent with the gate failure at PUR-05.",
+      "evidence": [
+        "Wellbeing impact assessment covering features and algorithms affecting children",
+        "Assessment of engagement mechanics, recommendation systems and notification design"
+      ],
+      "evidence_ref": "WP-113",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CHD-05": {
+      "control_id": "CHD-05",
+      "score": 1,
+      "finding": "Persons with disability having a lawful guardian are not identified and there is no mechanism for a guardian to act on their behalf. Support agents described handling such cases informally by accepting instructions from family members, which is both an unaddressed obligation and an impersonation risk.",
+      "evidence": [
+        "Guardian consent capture and verification mechanism",
+        "Published route for a guardian to identify themselves and exercise rights"
+      ],
+      "evidence_ref": "WP-114",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CMG-01": {
+      "control_id": "CMG-01",
+      "score": 3,
+      "finding": "The account aggregator relied upon is an RBI-licensed NBFC-AA and the entity holds its certificate on file. Registration specifically as a Consent Manager with the Data Protection Board has not been confirmed, and the entity has no process for periodic re-confirmation of that status.",
+      "evidence": [
+        "Registration verification evidence for each Consent Manager relied upon",
+        "Contractual terms addressing registration status and notification of change"
+      ],
+      "evidence_ref": "WP-050",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CMG-02": {
+      "control_id": "CMG-02",
+      "score": 2,
+      "finding": "Consent artefacts received through the aggregator are stored and the data fetch is scoped to the artefact. Reconciliation between artefacts held by the aggregator and consents recorded internally is not performed, so a revoked artefact would not necessarily stop an internal reuse of previously fetched financial information.",
+      "evidence": [
+        "Integration design and reconciliation controls between the intermediary and internal consent state",
+        "Exception reports for failed or delayed synchronisation"
+      ],
+      "evidence_ref": "WP-051",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-01": {
+      "control_id": "CON-01",
+      "score": 2,
+      "finding": "Consent is captured through a single checkbox covering the privacy policy, terms of service, marketing communications and credit bureau enquiry. It is therefore neither specific nor unconditional: a Data Principal cannot accept the service without also accepting marketing. Purpose-level granularity exists in the data model but is not exposed in the interface.",
+      "evidence": [
+        "Consent interface showing unticked, separate, affirmative controls",
+        "Absence of consent inferred from silence, inactivity or continued use"
+      ],
+      "evidence_ref": "WP-040",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-02": {
+      "control_id": "CON-02",
+      "score": 2,
+      "finding": "Registration for the payments-only product cannot be completed without consenting to the bureau enquiry, which is not necessary for that service. The lending journey, by contrast, is correctly scoped.",
+      "evidence": [
+        "Evidence that the service functions when non-essential consents are declined",
+        "Analysis distinguishing necessary from optional processing per service"
+      ],
+      "evidence_ref": "WP-041",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-03": {
+      "control_id": "CON-03",
+      "score": 3,
+      "finding": "The consent request is short and in plain language and names the entity. It does not provide the contact details of the person able to answer questions about the processing, and directs the reader to a 47-page combined policy document for detail.",
+      "evidence": [
+        "Consent request text with contact details present at the point of request",
+        "Readability assessment or plain-language review record"
+      ],
+      "evidence_ref": "WP-042",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-04": {
+      "control_id": "CON-04",
+      "score": 1,
+      "finding": "Withdrawal of consent is not available in the application. Marketing preferences can be toggled, but withdrawal of consent for processing requires an email to the support address, after which an agent follows a manual runbook. Against a two-tap consent action this is plainly not as easy to withdraw as to give.",
+      "evidence": [
+        "Self-service withdrawal control on the same surface as collection",
+        "Step-count comparison between giving and withdrawing"
+      ],
+      "evidence_ref": "WP-043",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-05": {
+      "control_id": "CON-05",
+      "score": 2,
+      "finding": "Consequences of withdrawal are described in the policy document but are not surfaced at the point of withdrawal, and the description does not distinguish consequences that follow from the withdrawal itself from service changes the entity elects to make.",
+      "evidence": [
+        "Withdrawal interface text describing actual consequences",
+        "Verification that stated consequences match what technically follows"
+      ],
+      "evidence_ref": "WP-044",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-06": {
+      "control_id": "CON-06",
+      "score": 1,
+      "finding": "Testing of three withdrawal requests found processing continued after withdrawal in all three. Marketing suppression was applied within 48 hours, but the Snowflake warehouse, the CleverTap audience and the churn model training set retained and continued to use the records. Median elapsed time to full cessation could not be established because the entity does not measure it.",
+      "evidence": [
+        "Measured cessation times across primary, secondary and vendor systems",
+        "Propagation mechanism from the consent store to downstream consumers"
+      ],
+      "evidence_ref": "WP-045",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-07": {
+      "control_id": "CON-07",
+      "score": 1,
+      "finding": "The consent table records a current state per Data Principal with a single last-updated timestamp. It does not retain the notice version, the interface, the purposes in force at the time, or any history of change. For two of five sampled Data Principals the entity could not demonstrate what was consented to or when. The Act places the burden of proving valid consent on the Data Fiduciary and that burden could not presently be discharged.",
+      "evidence": [
+        "Consent records capturing timestamp, purpose set, interface, notice version",
+        "Tamper-evidence or immutability controls over the consent store"
+      ],
+      "evidence_ref": "WP-046",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "CON-08": {
+      "control_id": "CON-08",
+      "score": 1,
+      "finding": "Purposes were extended twice in the period — advertising segments in September 2025 and the churn model in January 2026 — without a fresh notice or fresh consent. Existing consent was treated as covering the new purposes on the basis of the general 'improve our services' wording.",
+      "evidence": [
+        "Change log of processing purposes with materiality assessment",
+        "Re-consent campaigns tied to material changes"
+      ],
+      "evidence_ref": "WP-047",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GOV-01": {
+      "control_id": "GOV-01",
+      "score": 2,
+      "finding": "Accountability is asserted in the Information Privacy Policy v2.1 and the Head of Legal & Compliance is named as owner. However the policy is silent on the entity's responsibility for processing carried out by processors on its behalf, and the collections subsidiary operates its own dialler and call recording estate without the parent's oversight of that processing.",
+      "evidence": [
+        "Written appointment recording name, role and remit",
+        "Governance forum terms of reference and minutes evidencing oversight"
+      ],
+      "evidence_ref": "WP-010",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GOV-02": {
+      "control_id": "GOV-02",
+      "score": 2,
+      "finding": "A record of processing activities exists in a spreadsheet covering 61 activities, last updated November 2025. Walkthroughs identified four unrecorded processing activities: Kavach Junior parent supervision, the WhatsApp collections journey, the churn-prediction model in Kavach Analytics, and employee productivity monitoring in the collections function. The record does not capture retention period or recipient for 23 of the 61 entries.",
+      "evidence": [
+        "Record of processing activities with the fields above",
+        "Evidence of periodic review with dates and reviewer"
+      ],
+      "evidence_ref": "WP-011",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GOV-03": {
+      "control_id": "GOV-03",
+      "score": 3,
+      "finding": "Contact details for the privacy function are published in the app privacy policy and on the website footer, and the address routes to a monitored mailbox. The published contact is a generic role address rather than the person discharging the function, and the Kavach Junior parent console does not surface the contact at all.",
+      "evidence": [
+        "Screenshots of published contact details on website, app and other surfaces",
+        "Evidence of channel monitoring and ownership"
+      ],
+      "evidence_ref": "WP-012",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GOV-04": {
+      "control_id": "GOV-04",
+      "score": 2,
+      "finding": "Privacy is reported to the Risk Management Committee twice yearly as part of a combined information security update. Minutes for the two meetings in the period record no privacy-specific decision, no budget approval and no challenge from members. There is no board-level acceptance of the residual risk arising from the open items in this report.",
+      "evidence": [
+        "Board or committee minutes referencing data protection matters",
+        "Management information pack showing metrics reported"
+      ],
+      "evidence_ref": "WP-013",
+      "owner": "Vikram Shetty, Chief Financial Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GOV-05": {
+      "control_id": "GOV-05",
+      "score": 3,
+      "finding": "A policy set comprising an Information Privacy Policy, Data Classification Standard, Retention Standard and Third Party Standard is approved and accessible on the intranet. The Retention Standard is dated 2023 and predates both the Kavach Junior product and the current warehouse architecture, and the Third Party Standard does not address the s.8(2) contract requirement.",
+      "evidence": [
+        "Approved policy set with version history and approver",
+        "Mapping of policies to Act provisions"
+      ],
+      "evidence_ref": "WP-014",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GOV-06": {
+      "control_id": "GOV-06",
+      "score": 2,
+      "finding": "Annual information security training is mandatory and completion stands at 94 per cent. Privacy content within it runs to four slides and does not address consent, rights handling or the children's provisions. No role-specific training has been delivered to the engineering, marketing or collections teams whose decisions determine compliance in practice.",
+      "evidence": [
+        "Training material specific to the Act, not generic privacy content",
+        "Completion records by role with dates"
+      ],
+      "evidence_ref": "WP-015",
+      "owner": "Sneha Kulkarni, Head of People",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GOV-07": {
+      "control_id": "GOV-07",
+      "score": 1,
+      "finding": "Evidence of compliance is not systematically retained. Consent artefacts are held only in the current state of the consent table with no immutable history, notice versions are not archived, and rights request correspondence is held in agent mailboxes. The entity could not reconstruct, for a Data Principal who consented in March 2025, what notice they were shown. This directly undermines the ability to discharge the burden of proof the Act places on the Data Fiduciary.",
+      "evidence": [
+        "Versioned archive of notice and consent text with effective dates",
+        "Consent artefacts retrievable per Data Principal"
+      ],
+      "evidence_ref": "WP-016",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GRV-01": {
+      "control_id": "GRV-01",
+      "score": 2,
+      "finding": "A grievance mechanism exists in the form of a web form and a support email address, both monitored. There is no defined escalation path, no distinction between a service complaint and a data protection grievance, and no owner accountable for grievance outcomes as opposed to ticket closure.",
+      "evidence": [
+        "Documented grievance procedure with defined ownership and escalation",
+        "Evidence of staffing and of competence to resolve data protection matters"
+      ],
+      "evidence_ref": "WP-080",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GRV-02": {
+      "control_id": "GRV-02",
+      "score": 1,
+      "finding": "Response times are not measured against any prescribed period because the period has not been identified and no clock is started. Sampling of 15 privacy-related tickets found a median first substantive response of 11 days and a longest of 42 days.",
+      "evidence": [
+        "Service level configured to the prescribed period with automated escalation",
+        "Performance data showing distribution of response times"
+      ],
+      "evidence_ref": "WP-081",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GRV-03": {
+      "control_id": "GRV-03",
+      "score": 3,
+      "finding": "The grievance route is published in the app, on the website and in the privacy policy. It is not present in the Kavach Junior parent console and is not included in transactional communications, which is where a dissatisfied Data Principal is most likely to look.",
+      "evidence": [
+        "Grievance route published on website, app, notice and communications",
+        "Step count to locate the route from each surface"
+      ],
+      "evidence_ref": "WP-082",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "GRV-04": {
+      "control_id": "GRV-04",
+      "score": 1,
+      "finding": "No trend analysis is performed. Privacy grievances are not tagged, so the recurring theme identified during this assessment — inability to stop marketing contact after withdrawal — has never been reported to management as a pattern despite appearing in 9 of the 15 tickets sampled.",
+      "evidence": [
+        "Categorisation taxonomy and trend reports",
+        "Root-cause analyses for recurring categories"
+      ],
+      "evidence_ref": "WP-083",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "LGU-01": {
+      "control_id": "LGU-01",
+      "score": 2,
+      "finding": "Where consent is not relied upon, the entity's documentation cites 'legitimate use' generically rather than identifying the specific statutory limb. Two activities — fraud analytics using device signals, and the credit bureau reporting of repayment behaviour — rest on limbs that do not on their terms extend to that processing.",
+      "evidence": [
+        "Identification of the specific limb, by sub-clause, for each activity",
+        "Written analysis of why the activity falls within it"
+      ],
+      "evidence_ref": "WP-055",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "LGU-02": {
+      "control_id": "LGU-02",
+      "score": 3,
+      "finding": "Employment-purpose processing is documented for payroll, benefits and performance. The collections team's screen and keystroke monitoring is also placed under this limb; the connection to safeguarding the employer from loss or to provision of a service to the employee is asserted rather than evidenced, and employees have not been informed of the monitoring.",
+      "evidence": [
+        "Inventory of employee data processing with the limb mapped per use",
+        "Necessity analysis for monitoring, productivity analytics and surveillance"
+      ],
+      "evidence_ref": "WP-056",
+      "owner": "Sneha Kulkarni, Head of People",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "LGU-03": {
+      "control_id": "LGU-03",
+      "score": 3,
+      "finding": "Voluntary provision is relied upon for support interactions initiated by the Data Principal, which is appropriate. The same limb is stretched to cover retention of call recordings for model training, which is a different purpose from the one for which the data was voluntarily provided.",
+      "evidence": [
+        "Identification of the purpose for which data was volunteered, per activity",
+        "Controls confining processing to that purpose"
+      ],
+      "evidence_ref": "WP-057",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "NOT-01": {
+      "control_id": "NOT-01",
+      "score": 3,
+      "finding": "The registration journey presents a notice screen before the consent action on the mobile application. In the web journey and in the assisted onboarding flow used by field agents, the notice is presented as a hyperlink beside a pre-ticked declaration, so it neither accompanies nor precedes the consent in any meaningful sense.",
+      "evidence": [
+        "Screenshots or recordings of each consent journey showing notice placement",
+        "Inventory of all consent collection points including offline and partner channels"
+      ],
+      "evidence_ref": "WP-030",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "NOT-02": {
+      "control_id": "NOT-02",
+      "score": 1,
+      "finding": "The notice describes the data collected in categories such as 'identity and contact information' and 'usage data' and states purposes as 'to provide and improve our services'. It is neither an itemised description of the personal data nor a specified purpose. The notice also omits the account aggregator data received through the Consent Manager entirely.",
+      "evidence": [
+        "Notice text with itemised data categories and specific purposes",
+        "Reconciliation of notice content to the processing register"
+      ],
+      "evidence_ref": "WP-031",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "NOT-03": {
+      "control_id": "NOT-03",
+      "score": 2,
+      "finding": "The notice explains the access and correction rights and links to the grievance form. It does not explain the right to withdraw consent, the right to nominate, or the manner in which a Data Principal may make a complaint to the Data Protection Board.",
+      "evidence": [
+        "Notice text covering withdrawal, grievance redressal and complaint to the Board",
+        "Working links or contact routes for each"
+      ],
+      "evidence_ref": "WP-032",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "NOT-04": {
+      "control_id": "NOT-04",
+      "score": 1,
+      "finding": "Notice and consent screens are available in English and Hindi only. The entity's own registration data shows material user populations in Tamil, Telugu, Marathi, Bengali and Kannada. No language other than English and Hindi is offered, and no request mechanism exists for the remaining Eighth Schedule languages.",
+      "evidence": [
+        "Notice published in English plus Eighth Schedule languages",
+        "Discoverable language selection mechanism on each surface"
+      ],
+      "evidence_ref": "WP-033",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "NOT-05": {
+      "control_id": "NOT-05",
+      "score": 0,
+      "finding": "Approximately 9.4 million Data Principals onboarded before the current notice version have not been given a retrospective notice. Management was aware of the requirement and has scoped a campaign but has not set a date, citing concern about attrition and support volume. No compensating action has been taken.",
+      "evidence": [
+        "Identification of the pre-commencement Data Principal population",
+        "Notice content issued retrospectively and despatch records"
+      ],
+      "evidence_ref": "WP-034",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PRO-01": {
+      "control_id": "PRO-01",
+      "score": 3,
+      "finding": "A vendor register lists 96 third parties with 34 flagged as processing personal data. Onward recipients engaged by those processors are not recorded, and four processors identified through expenditure analysis during this assessment were absent from the register, including the third-party data broker noted at PUR-01.",
+      "evidence": [
+        "Processor and recipient inventory recording data shared and purpose",
+        "Sub-processor visibility for each principal processor"
+      ],
+      "evidence_ref": "WP-120",
+      "owner": "Farhan Qureshi, Head of Vendor Management",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PRO-02": {
+      "control_id": "PRO-02",
+      "score": 2,
+      "finding": "Of 34 processors, 26 have an executed agreement containing data protection terms. Eight are engaged on click-through terms or purchase orders alone, including two with access to full customer records. The Act requires a valid contract for engagement of a processor and does not admit a de facto arrangement.",
+      "evidence": [
+        "Executed contracts for every processor in the inventory",
+        "Data protection terms addressing purpose limitation, safeguards, erasure, breach and sub-processing"
+      ],
+      "evidence_ref": "WP-121",
+      "owner": "Farhan Qureshi, Head of Vendor Management",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PRO-03": {
+      "control_id": "PRO-03",
+      "score": 2,
+      "finding": "Where agreements exist, security obligations are generally flowed down. Erasure on instruction is absent from 21 of 26 agreements and breach notification to the entity within a defined period is absent from 14. The entity therefore cannot discharge its own erasure and intimation obligations through its processors, which is the practical consequence identified at RET-03 and BRC-03.",
+      "evidence": [
+        "Clauses mandating equivalent safeguards, audit or assurance rights",
+        "Breach notification window shorter than the entity's own notification deadline"
+      ],
+      "evidence_ref": "WP-122",
+      "owner": "Farhan Qureshi, Head of Vendor Management",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PRO-04": {
+      "control_id": "PRO-04",
+      "score": 2,
+      "finding": "Sub-processor authorisation is required in the standard template but the template was adopted in 2024 and older agreements are silent. No processor has notified a sub-processor change in the period, which given the vendors involved is more likely to indicate the clause is not operating than that no changes occurred.",
+      "evidence": [
+        "Sub-processing authorisation or objection rights in contracts",
+        "Flow-down obligation to sub-processors"
+      ],
+      "evidence_ref": "WP-123",
+      "owner": "Farhan Qureshi, Head of Vendor Management",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PRO-05": {
+      "control_id": "PRO-05",
+      "score": 3,
+      "finding": "Annual assurance is obtained for the 12 processors classified as critical, through SOC 2 reports or completed questionnaires, and exceptions are tracked. The remaining 22 receive no periodic assurance and the classification driving that split is based on spend rather than on the personal data accessed.",
+      "evidence": [
+        "Risk-tiered due diligence at onboarding",
+        "Periodic assurance: certifications reviewed, questionnaires, audits or site visits"
+      ],
+      "evidence_ref": "WP-124",
+      "owner": "Farhan Qureshi, Head of Vendor Management",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PRO-06": {
+      "control_id": "PRO-06",
+      "score": 2,
+      "finding": "Exit provisions requiring return or erasure appear in 15 of 26 agreements. Two processors were disengaged in the period and neither provided a certificate of erasure; in one case the entity's own records show data remained accessible in the vendor's environment three months after termination.",
+      "evidence": [
+        "Exit procedure requiring return or erasure and written confirmation",
+        "Erasure confirmations for recently terminated processors"
+      ],
+      "evidence_ref": "WP-125",
+      "owner": "Farhan Qureshi, Head of Vendor Management",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PUR-01": {
+      "control_id": "PUR-01",
+      "score": 2,
+      "finding": "A lawful basis is documented for the lending and payments journeys. Four activities have no identified basis: the churn model, marketing enrichment from a third-party data broker, call recording in collections, and the employee monitoring noted at GOV-02. Management's position that these fall within 'legitimate business interest' has no counterpart in the Act, which provides a closed list of legitimate uses.",
+      "evidence": [
+        "Lawful basis recorded per activity in the processing register",
+        "Reasoning for each legitimate use relied upon, citing the specific limb"
+      ],
+      "evidence_ref": "WP-020",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PUR-02": {
+      "control_id": "PUR-02",
+      "score": 2,
+      "finding": "The onboarding journey collects marital status, education level and employer address for all applicants irrespective of product. Product management confirmed these fields are used only for a subset of underwriting models and could not evidence necessity for the payments-only journey, which represents roughly 60 per cent of registrations.",
+      "evidence": [
+        "Field-level necessity analysis for principal collection points",
+        "Distinction between mandatory and optional fields in the interface"
+      ],
+      "evidence_ref": "WP-021",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PUR-03": {
+      "control_id": "PUR-03",
+      "score": 1,
+      "finding": "Transaction data collected for payments processing is used to build propensity segments that are pushed to Meta and Google for acquisition campaigns. The notice presented at registration does not disclose advertising as a purpose. This is undisclosed secondary use of data obtained for a different specified purpose.",
+      "evidence": [
+        "Data flow documentation from collection into secondary environments",
+        "Purpose-compatibility assessments for secondary uses"
+      ],
+      "evidence_ref": "WP-022",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PUR-04": {
+      "control_id": "PUR-04",
+      "score": 3,
+      "finding": "Bureau and KYC data feeding underwriting is refreshed at decision time and a correction workflow exists in Kavach CRM. Corrections applied in CRM do not propagate to the Snowflake warehouse, so models and collections lists may run on superseded data for up to 30 days.",
+      "evidence": [
+        "Inventory of decision-making and onward-disclosure flows",
+        "Data quality controls: validation rules, reconciliation, exception handling"
+      ],
+      "evidence_ref": "WP-023",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "PUR-05": {
+      "control_id": "PUR-05",
+      "score": 2,
+      "finding": "A privacy review is a documented gate in the product development lifecycle but is discretionary in practice. Of the 11 features released in the period, three carried a completed review. Kavach Junior, the highest-risk launch in the period, went live without one.",
+      "evidence": [
+        "Defined assessment gate in the product and procurement lifecycle",
+        "Completed assessments for recent launches, dated before go-live"
+      ],
+      "evidence_ref": "WP-024",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RET-01": {
+      "control_id": "RET-01",
+      "score": 2,
+      "finding": "A retention schedule exists but is expressed at system level rather than by data category and purpose, and defaults to 'as required by applicable law' for 11 of 19 systems. Snowflake and the S3 data lake have no defined retention period at all; the oldest personal data located during testing dated from 2019.",
+      "evidence": [
+        "Retention schedule mapped to data categories and purposes",
+        "Specific statutory or regulatory citation for each extended retention period"
+      ],
+      "evidence_ref": "WP-060",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RET-02": {
+      "control_id": "RET-02",
+      "score": 1,
+      "finding": "Erasure on withdrawal or purpose completion is not implemented. The manual runbook noted at CON-04 anonymises the CRM record but leaves the warehouse, the ledger, the communications platforms and the backups untouched. RBI and PMLA retention requirements were cited as justification but have not been mapped to data categories, so they operate as a blanket exception rather than a bounded one.",
+      "evidence": [
+        "Automated erasure triggers tied to withdrawal and purpose-completion events",
+        "Evidence from direct queries that data is removed, not merely flagged"
+      ],
+      "evidence_ref": "WP-061",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RET-03": {
+      "control_id": "RET-03",
+      "score": 1,
+      "finding": "Erasure does not propagate. Testing confirmed that a record erased in Kavach CRM remained present in Snowflake, in the dbt derived tables, in CleverTap and in Gupshup's message logs. No processor has been issued an erasure instruction in the period, and the vendor contracts contain no mechanism for doing so.",
+      "evidence": [
+        "Data topology map identifying every store holding personal data",
+        "Processor erasure instructions and written confirmations of completion"
+      ],
+      "evidence_ref": "WP-062",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RET-04": {
+      "control_id": "RET-04",
+      "score": 0,
+      "finding": "There is no concept of deemed purpose completion on inactivity. Accounts dormant since 2019 remain fully populated and continue to be included in marketing audiences. Approximately 2.1 million Data Principals have had no interaction with the platform for over three years.",
+      "evidence": [
+        "Inactivity definition and tracking mechanism per data category",
+        "Class determination assessment against the prescribed thresholds"
+      ],
+      "evidence_ref": "WP-063",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RET-05": {
+      "control_id": "RET-05",
+      "score": 0,
+      "finding": "No advance intimation is given before erasure, because no scheduled erasure takes place. The requirement has not been designed for.",
+      "evidence": [
+        "Pre-erasure notification template and trigger configuration",
+        "Despatch logs showing notice preceding erasure by the required interval"
+      ],
+      "evidence_ref": "WP-064",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RGT-01": {
+      "control_id": "RGT-01",
+      "score": 2,
+      "finding": "An access request route exists via the grievance form and produces a summary of profile data. It does not include the identities of processors or other recipients with whom data has been shared, nor a description of the processing activities. Two of the four requests received in the period were answered outside 30 days.",
+      "evidence": [
+        "Access request procedure and fulfilment records",
+        "Sample response demonstrating all three statutory elements"
+      ],
+      "evidence_ref": "WP-070",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RGT-02": {
+      "control_id": "RGT-02",
+      "score": 3,
+      "finding": "Correction and updating of profile data is self-service in the application and works as described. Completion of incomplete records and correction of data held only in the warehouse or with processors requires a manual request and is not propagated, as noted at PUR-04.",
+      "evidence": [
+        "Correction procedure and fulfilment records with elapsed times",
+        "Evidence of propagation to processors and onward recipients"
+      ],
+      "evidence_ref": "WP-071",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RGT-03": {
+      "control_id": "RGT-03",
+      "score": 1,
+      "finding": "Erasure requests are accepted but cannot be fulfilled beyond the CRM, for the reasons at RET-03. Three of the three erasure requests received were closed as completed on the basis of CRM anonymisation alone, which overstates what was done and creates a misleading record.",
+      "evidence": [
+        "Erasure request procedure and fulfilment records",
+        "Verification of removal across all identified stores"
+      ],
+      "evidence_ref": "WP-072",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RGT-04": {
+      "control_id": "RGT-04",
+      "score": 0,
+      "finding": "The right to nominate has not been implemented. There is no interface, no record structure and no operating procedure for giving effect to a nomination on death or incapacity.",
+      "evidence": [
+        "Nomination capture mechanism accessible to Data Principals",
+        "Nominee verification and rights-exercise procedure"
+      ],
+      "evidence_ref": "WP-073",
+      "owner": "Rohit Menon, Head of Product",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RGT-05": {
+      "control_id": "RGT-05",
+      "score": 3,
+      "finding": "Identity verification for rights requests reuses the existing authenticated session where the request originates in the app, which is proportionate. Email-originated requests trigger a request for a self-attested identity document, which exceeds what is necessary where the mailbox is the registered one.",
+      "evidence": [
+        "Documented verification standard, tiered by request sensitivity",
+        "Evidence that verification uses existing authenticated channels where available"
+      ],
+      "evidence_ref": "WP-074",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "RGT-06": {
+      "control_id": "RGT-06",
+      "score": 2,
+      "finding": "Rights requests arrive through the general support queue and are not separately categorised, so volumes, ageing and outcomes cannot be reported. The eight requests identified in the period were reconstructed manually from mailbox searches during this assessment. No service level is defined.",
+      "evidence": [
+        "Consolidated rights request register across every inbound channel",
+        "Elapsed-time metrics against the prescribed period"
+      ],
+      "evidence_ref": "WP-075",
+      "owner": "Anita Desai, Head of Customer Experience",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SDF-01": {
+      "control_id": "SDF-01",
+      "score": 1,
+      "finding": "No Data Protection Officer has been appointed. The Head of Legal & Compliance performs the function informally alongside a broad commercial mandate, reports to the General Counsel rather than to the board, and is not designated as DPO in any board record. The statutory requirement is a DPO based in India who represents the Significant Data Fiduciary and is responsible to the board, and none of those three elements is presently satisfied.",
+      "evidence": [
+        "Appointment letter recording India base, remit and reporting line to the board",
+        "Board minutes evidencing direct reporting"
+      ],
+      "evidence_ref": "WP-140",
+      "owner": "Vikram Shetty, Chief Financial Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SDF-02": {
+      "control_id": "SDF-02",
+      "score": 0,
+      "finding": "No independent data auditor has been appointed. Management's position was that the existing ISO 27001 certification body discharges the requirement; that engagement is an information security certification and does not evaluate compliance with the Act.",
+      "evidence": [
+        "Appointment of an independent data auditor with engagement terms",
+        "Independence assessment addressing prior or concurrent advisory work"
+      ],
+      "evidence_ref": "WP-141",
+      "owner": "Vikram Shetty, Chief Financial Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SDF-03": {
+      "control_id": "SDF-03",
+      "score": 1,
+      "finding": "No Data Protection Impact Assessment has been conducted. A template was drafted in January 2026 and remains unapproved and unused. The obligation is periodic and applies to the entity as a Significant Data Fiduciary irrespective of individual product risk.",
+      "evidence": [
+        "DPIAs covering each element of the statutory definition",
+        "Defined periodicity and triggers for reassessment on material change"
+      ],
+      "evidence_ref": "WP-142",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SDF-04": {
+      "control_id": "SDF-04",
+      "score": 1,
+      "finding": "No periodic audit of compliance with the Act has been undertaken. This assessment is the first exercise of its kind and was commissioned by management rather than performed by an independent auditor, so it does not itself discharge the obligation.",
+      "evidence": [
+        "Audit plan and completed audit reports on the prescribed cycle",
+        "Reporting to the board or equivalent governing body"
+      ],
+      "evidence_ref": "WP-143",
+      "owner": "Vikram Shetty, Chief Financial Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SDF-05": {
+      "control_id": "SDF-05",
+      "score": 1,
+      "finding": "Algorithmic due diligence is not performed. Three models act on personal data with direct consequences for Data Principals — underwriting, collections prioritisation and churn prediction — and none has been assessed for risk to the rights of Data Principals. The underwriting model has documented fairness testing performed for RBI purposes, which is the nearest available evidence but is directed at a different question.",
+      "evidence": [
+        "Inventory of algorithmic and machine-learning systems processing personal data",
+        "Due diligence records assessing risk to rights, including bias and accuracy testing"
+      ],
+      "evidence_ref": "WP-144",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SDF-06": {
+      "control_id": "SDF-06",
+      "score": 2,
+      "finding": "The entity has not identified whether any transfer restriction specific to a Significant Data Fiduciary applies to it, and has no process for monitoring the position. The gap follows from XBD-02 and would be closed by the same mechanism.",
+      "evidence": [
+        "Analysis of applicable transfer restrictions and the categories affected",
+        "Reconciliation against the cross-border transfer map"
+      ],
+      "evidence_ref": "WP-145",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-01": {
+      "control_id": "SEC-01",
+      "score": 3,
+      "finding": "A security programme aligned to ISO 27001 is defined, owned by the CISO and certified, with the certificate valid to August 2027. The statement of applicability is scoped to the payments platform and excludes the collections subsidiary and the corporate HRMS, both of which hold personal data.",
+      "evidence": [
+        "Approved security standard applicable to personal data, with named owner",
+        "Mapping of implemented controls to each prescribed safeguard"
+      ],
+      "evidence_ref": "WP-090",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-02": {
+      "control_id": "SEC-02",
+      "score": 3,
+      "finding": "Role-based access control is enforced through Okta with quarterly recertification for production systems. Recertification does not extend to Snowflake, where 41 analyst accounts hold read access to unmasked customer tables, including 7 belonging to former contractors whose engagements have ended.",
+      "evidence": [
+        "Role-based access model with documented entitlements per role",
+        "Periodic access recertification records with evidence of revocations"
+      ],
+      "evidence_ref": "WP-091",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-03": {
+      "control_id": "SEC-03",
+      "score": 3,
+      "finding": "Data is encrypted at rest with AWS KMS and in transit with TLS 1.2 or above. Column-level masking is applied in the production database but not in Snowflake or in the pre-production environments, which are refreshed from production without obfuscation.",
+      "evidence": [
+        "Transport and at-rest encryption configuration with key management",
+        "Masking or tokenisation in non-production, logs and analytics extracts"
+      ],
+      "evidence_ref": "WP-092",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-04": {
+      "control_id": "SEC-04",
+      "score": 4,
+      "finding": "Centralised logging into a managed SIEM covers all in-scope production systems, with documented use cases for privileged access, bulk export and anomalous query patterns. Alert tuning is reviewed monthly and the 24x7 monitoring arrangement was evidenced through three sampled alerts and their disposition.",
+      "evidence": [
+        "Logging coverage across systems holding personal data, including administrative access",
+        "Retention configuration meeting the prescribed period, with tamper protection"
+      ],
+      "evidence_ref": "WP-093",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-05": {
+      "control_id": "SEC-05",
+      "score": 3,
+      "finding": "Vulnerability scanning runs weekly with defined remediation SLAs. Of 23 critical findings raised in the period, 19 were closed within SLA; the four exceptions relate to the legacy PPI ledger and have been open for over 120 days without a documented risk acceptance.",
+      "evidence": [
+        "Vulnerability scan and penetration test reports for the current cycle",
+        "Remediation timescales by severity and performance against them"
+      ],
+      "evidence_ref": "WP-094",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-06": {
+      "control_id": "SEC-06",
+      "score": 3,
+      "finding": "Change management is enforced through Freshservice with peer review and automated security testing in the pipeline. Emergency changes bypass the control and 14 per cent of production changes in the period were classified as emergency, which is high enough to weaken the assurance the control provides.",
+      "evidence": [
+        "Change control procedure with mandatory security review gates",
+        "Sample change records showing review and approval before deployment"
+      ],
+      "evidence_ref": "WP-095",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-07": {
+      "control_id": "SEC-07",
+      "score": 4,
+      "finding": "Backups are encrypted, replicated across availability zones and restore-tested quarterly. The two restore tests in the period met their objectives and are documented with evidence of data integrity verification.",
+      "evidence": [
+        "Backup configuration with encryption and restricted access",
+        "Restore test records with dates and outcomes"
+      ],
+      "evidence_ref": "WP-096",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-08": {
+      "control_id": "SEC-08",
+      "score": 3,
+      "finding": "Background verification, confidentiality undertakings, endpoint management and data loss prevention are in place for employees. Contractors in the collections subsidiary use personally-owned devices with no endpoint control, and physical access to the collections floor is not restricted from the general office area.",
+      "evidence": [
+        "Background verification and confidentiality undertakings for personnel with access",
+        "Endpoint management and encryption coverage reports"
+      ],
+      "evidence_ref": "WP-097",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "SEC-09": {
+      "control_id": "SEC-09",
+      "score": 3,
+      "finding": "Annual penetration testing by an external firm covers the application and infrastructure, and the most recent report is dated March 2026 with findings tracked to closure. Testing has never been directed at the privacy controls themselves — consent enforcement, erasure completeness or access segregation in the warehouse.",
+      "evidence": [
+        "Independent assessment or audit reports covering personal data safeguards",
+        "Management responses with owners and dates"
+      ],
+      "evidence_ref": "WP-098",
+      "owner": "Arjun Nair, Chief Information Security Officer",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "XBD-01": {
+      "control_id": "XBD-01",
+      "score": 3,
+      "finding": "Transfers are mapped for the principal SaaS platforms and the register records destination country and hosting region. The mapping omits support access from the Singapore affiliate, sub-processor locations, and the CleverTap and Meta onward flows, so it understates the actual footprint.",
+      "evidence": [
+        "Transfer map recording destination country, recipient, data categories and purpose",
+        "Treatment of remote access from outside India as a transfer"
+      ],
+      "evidence_ref": "WP-130",
+      "owner": "Devika Iyer, VP Engineering",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "XBD-02": {
+      "control_id": "XBD-02",
+      "score": 2,
+      "finding": "No mechanism exists for monitoring restricted-country notifications. The entity became aware of the transfer restriction regime through this assessment and has no owner for tracking it, which means a notification would not be detected and acted upon.",
+      "evidence": [
+        "Named owner and defined monitoring mechanism for notifications",
+        "Contingency assessment for each principal destination"
+      ],
+      "evidence_ref": "WP-131",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "XBD-03": {
+      "control_id": "XBD-03",
+      "score": 2,
+      "finding": "RBI payment system data localisation requirements are met for the payments platform, with the annual system audit report on file. Localisation requirements have not been assessed for the lending and analytics estates, and the Snowflake account holds transaction-derived data in a configuration that has not been reviewed against the RBI direction. Sectoral requirements of this kind are expressly preserved and are not displaced by compliance with the Act.",
+      "evidence": [
+        "Analysis of sectoral localisation and transfer requirements applicable to the entity",
+        "Compliance evidence for each, including any regulator filings or audit reports"
+      ],
+      "evidence_ref": "WP-132",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    },
+    "XBD-04": {
+      "control_id": "XBD-04",
+      "score": 2,
+      "finding": "Standard contractual protections are present in the major SaaS agreements. Transfers are not disclosed in the notice, no assessment of the destination environment has been performed, and the Singapore affiliate's support access operates under an intra-group arrangement that has never been documented.",
+      "evidence": [
+        "Contracts with offshore recipients containing equivalent safeguard obligations",
+        "Notice or disclosure referring to processing outside India where applicable"
+      ],
+      "evidence_ref": "WP-133",
+      "owner": "Meera Raghunathan, Head of Legal & Compliance",
+      "target_date": "",
+      "auditor_note": ""
+    }
+  },
+  "assessment_date": "2026-08-14",
+  "auditor_name": "Nandita Krishnan, CIPP/E, CISA",
+  "auditor_firm": "Sentinel Assurance LLP, Chartered Accountants",
+  "engagement_ref": "SA/DPDP/2026/0417",
+  "report_title": "DPDP Act, 2023 Compliance Audit Report",
+  "scope_statement": "An assessment of the design and operating effectiveness of the entity's arrangements for compliance with the Digital Personal Data Protection Act, 2023 across the digital personal data processing activities of Kavach Financial Technologies Private Limited and its collections subsidiary, covering the systems and activities listed in the scope schedule. Fieldwork was performed between 27 July and 14 August 2026 and comprised document inspection, 19 process walkthroughs with control owners, inspection of system configuration, and substantive testing of consent, withdrawal, rights and erasure journeys on live and non-production environments.",
+  "limitations": [
+    "This assessment is based on information, documentation and explanations made available by management and on the tests described for each control. It is not an assurance engagement and expresses no audit opinion.",
+    "Testing was performed on a sample basis. The absence of a finding is not a representation that no exception exists outside the items tested.",
+    "The assessment reflects the position as at the assessment date and does not address subsequent changes in the entity's processing or in the legal framework.",
+    "Nothing in this report constitutes legal advice. Conclusions on the application of the Act to particular processing should be confirmed with qualified counsel.",
+    "Testing of erasure completeness was performed on non-production environments refreshed from production. Where a finding turns on data present in production only, this is stated in the finding.",
+    "The account aggregator's own systems and controls were not examined. Reliance was placed on its licence status and on artefacts it made available to the entity."
+  ],
+  "scoping_assumptions": [
+    "The commencement position of individual provisions of the DPDP Act, 2023 and the DPDP Rules has not been confirmed. Findings are expressed as compliance gaps against the framework as a whole and should not be characterised as contraventions of provisions that are not yet in force.",
+    "DPDP Rules citations recorded as '[Rules citation to be verified]' were not verifiable at the time of the assessment. See the Unverified Citations appendix."
+  ],
+  "library_version": "1.0.0",
+  "_schema": "dpdpa-audit-assessment/1"
+}

@@ -1,0 +1,11 @@
+# DPDPA Audit Toolkit — runtime dependencies.
+#
+# Three libraries, one per output format, and nothing else. The scoring engine,
+# the control library loader and the CLI are standard library only, so `score`
+# and `validate` run on a bare interpreter; the two report writers are what pull
+# these in. Node is optional and only used by the workbench tests — the suite
+# skips those if it is absent.
+
+PyYAML>=6.0          # the control library is YAML
+openpyxl>=3.1        # the control matrix workbook, with live formulas
+python-docx>=1.1     # the formal audit report

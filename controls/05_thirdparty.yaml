@@ -1,0 +1,277 @@
+# =============================================================================
+# DPDPA CONTROL LIBRARY — 05: THIRD PARTIES & CROSS-BORDER
+# Domains: PRO (Processors & Vendor Contracts), XBD (Cross-Border Transfers)
+# Schema documented in 01_foundation.yaml
+# =============================================================================
+
+controls:
+
+# -----------------------------------------------------------------------------
+# PRO — PROCESSORS & VENDOR CONTRACTS
+# -----------------------------------------------------------------------------
+
+- id: PRO-01
+  domain: PRO
+  title: "Complete inventory of Data Processors and onward recipients"
+  obligation: >-
+    A Data Fiduciary remains responsible for compliance in respect of processing
+    undertaken on its behalf by a Data Processor, and must be able to disclose to a
+    Data Principal the identities of all Data Fiduciaries and Data Processors with
+    whom personal data has been shared.
+  act_ref: "s.8(1), s.11(1)(b), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is there a complete inventory of processors and other recipients, including
+    sub-processors, marketing and analytics platforms, and tools procured outside
+    formal procurement on a corporate card?
+  test_procedure: "Inspect the inventory; test completeness against accounts payable, expense data and outbound network or SaaS discovery."
+  evidence_expected:
+    - "Processor and recipient inventory recording data shared and purpose"
+    - "Sub-processor visibility for each principal processor"
+    - "Reconciliation against payables or SaaS discovery to find unmanaged tools"
+  scoring:
+    "0": "No inventory. The entity cannot state who holds its personal data."
+    "2": "An inventory covers contracted processors but omits sub-processors and tools acquired outside procurement, and has not been reconciled against payables."
+    "4": "A complete inventory, reconciled against payables or discovery tooling, records data shared and purpose for every recipient and maintains sub-processor visibility."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: PRO-02
+  domain: PRO
+  title: "Valid contract in place with every Data Processor"
+  obligation: >-
+    A Data Fiduciary may engage, appoint, use or otherwise involve a Data Processor
+    to process personal data on its behalf only under a valid contract.
+  act_ref: "s.8(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Does every processor have a current, executed contract covering personal data
+    processing — and are there processors operating on expired agreements, purchase
+    orders alone, or click-through terms never reviewed?
+  test_procedure: "Inspect contracts for a sample of processors from the inventory; test currency of execution and completeness of data protection terms."
+  evidence_expected:
+    - "Executed contracts for every processor in the inventory"
+    - "Data protection terms addressing purpose limitation, safeguards, erasure, breach and sub-processing"
+    - "Contract currency tracking with renewal alerts"
+  scoring:
+    "0": "Processors operate without contracts, or on purchase orders with no data protection terms."
+    "2": "Most processors are contracted but a material number rely on expired agreements or unreviewed click-through terms, and coverage of the required terms is inconsistent."
+    "4": "Every processor in the inventory has a current executed contract with complete data protection terms, tracked for currency with renewal alerts, and exceptions are escalated."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 7
+
+- id: PRO-03
+  domain: PRO
+  title: "Safeguards, erasure and breach obligations flowed down"
+  obligation: >-
+    The Data Fiduciary's duties to protect personal data and to cause erasure
+    extend to data held by processors, which requires those duties to be reflected
+    in the contract and given effect operationally.
+  act_ref: "s.8(1), s.8(5), s.8(7), DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Do processor contracts require security safeguards at least equivalent to the
+    entity's own, prompt breach notification within a window that allows the entity
+    to meet its own deadline, and erasure on instruction and at termination?
+  test_procedure: "Inspect contract clauses for each requirement; test whether the processor breach notification window is shorter than the entity's own obligation."
+  evidence_expected:
+    - "Clauses mandating equivalent safeguards, audit or assurance rights"
+    - "Breach notification window shorter than the entity's own notification deadline"
+    - "Erasure and return obligations on instruction and at termination"
+  scoring:
+    "0": "Contracts are silent on safeguards, breach notification and erasure."
+    "2": "Clauses exist but the processor notification window equals or exceeds the entity's own deadline — making compliance arithmetically impossible — or erasure at termination is unaddressed."
+    "4": "Contracts mandate equivalent safeguards with assurance rights, require notification within a window that leaves the entity time to notify, and impose erasure on instruction and at termination."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 1
+
+- id: PRO-04
+  domain: PRO
+  title: "Sub-processor control and authorisation"
+  obligation: >-
+    Because responsibility under section 8(1) is not displaced by sub-contracting,
+    onward engagement by a processor must be controlled and the same obligations
+    must flow down the chain.
+  act_ref: "s.8(1), s.8(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Do contracts require authorisation or notification before a sub-processor is
+    engaged, require equivalent flow-down, and does the entity maintain visibility
+    of the current sub-processor list?
+  test_procedure: "Inspect sub-processing clauses; test current sub-processor lists for a sample of processors against what the entity holds."
+  evidence_expected:
+    - "Sub-processing authorisation or objection rights in contracts"
+    - "Flow-down obligation to sub-processors"
+    - "Current sub-processor lists obtained and reviewed"
+  scoring:
+    "0": "Sub-processing is unrestricted and the entity has no visibility of who else holds the data."
+    "2": "Contracts require notification but the entity does not track or review sub-processor lists in practice, so visibility is nominal."
+    "4": "Authorisation or objection rights are contractual, flow-down is required, current sub-processor lists are obtained and reviewed, and changes are assessed."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+
+- id: PRO-05
+  domain: PRO
+  title: "Processor assurance and monitoring"
+  obligation: >-
+    Retaining responsibility for a processor's processing implies an obligation to
+    satisfy oneself, on a continuing basis, that the processor is in fact meeting
+    the required standard.
+  act_ref: "s.8(1), s.8(5), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is processor compliance verified through due diligence at onboarding and
+    periodic assurance thereafter — proportionate to risk — or does verification
+    end at contract signature?
+  test_procedure: "Inspect due diligence and periodic assurance records for high-risk processors; test whether identified deficiencies were pursued."
+  evidence_expected:
+    - "Risk-tiered due diligence at onboarding"
+    - "Periodic assurance: certifications reviewed, questionnaires, audits or site visits"
+    - "Evidence of deficiencies identified and pursued to resolution"
+  scoring:
+    "0": "No due diligence or ongoing assurance. Processors are trusted on the strength of the contract."
+    "2": "Onboarding due diligence occurs but there is no periodic reassessment, or certifications are collected without being read or reconciled to the services actually used."
+    "4": "Risk-tiered due diligence at onboarding is followed by periodic assurance, certification scope is checked against services used, and deficiencies are pursued to resolution."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+
+- id: PRO-06
+  domain: PRO
+  title: "Exit, transition and return or erasure on termination"
+  obligation: >-
+    The erasure duty extends to data made available to processors, which makes the
+    treatment of data at the end of the relationship a compliance matter rather
+    than a commercial one.
+  act_ref: "s.8(7), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    On termination, is personal data returned or erased, with written confirmation
+    obtained — and does the entity actually pursue this for terminated vendors
+    rather than allowing the relationship to lapse?
+  test_procedure: "Inspect a sample of terminated processor relationships for erasure or return confirmations; test the exit procedure."
+  evidence_expected:
+    - "Exit procedure requiring return or erasure and written confirmation"
+    - "Erasure confirmations for recently terminated processors"
+    - "Register of terminated relationships with erasure status"
+  scoring:
+    "0": "No exit procedure. Terminated vendors retain data indefinitely and no confirmation is sought."
+    "2": "The procedure exists contractually but is not enforced in practice; confirmations are missing for most terminated relationships."
+    "4": "Every termination triggers a documented return or erasure step, written confirmations are obtained and retained, and a register tracks status to closure."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+
+# -----------------------------------------------------------------------------
+# XBD — CROSS-BORDER TRANSFERS
+# -----------------------------------------------------------------------------
+
+- id: XBD-01
+  domain: XBD
+  title: "Cross-border transfers mapped"
+  obligation: >-
+    The Central Government may, by notification, restrict the transfer of personal
+    data by a Data Fiduciary for processing to a country or territory outside
+    India. Compliance presupposes knowing where data goes.
+  act_ref: "s.16(1), DPDP Act, 2023"
+  rule_slot: CROSS_BORDER_CONDITIONS
+  audit_question: >-
+    Is there a complete map of transfers outside India, including access from
+    outside India — offshore support teams, group functions and cloud regions —
+    which constitutes a flow even where storage remains in India?
+  test_procedure: "Inspect the transfer map; test completeness against cloud region configuration, support team locations and group access arrangements."
+  evidence_expected:
+    - "Transfer map recording destination country, recipient, data categories and purpose"
+    - "Treatment of remote access from outside India as a transfer"
+    - "Cloud region and replication configuration evidence"
+  scoring:
+    "0": "Transfers have not been mapped. The entity cannot state which countries its personal data reaches."
+    "2": "Storage locations are known but access from outside India — offshore support, group IT, follow-the-sun operations — is not treated or recorded as a transfer."
+    "4": "A complete map records every destination and recipient, expressly includes remote access from outside India, and is reconciled to cloud configuration and support arrangements."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: XBD-02
+  domain: XBD
+  title: "Monitoring of restricted-country notifications"
+  obligation: >-
+    Section 16 operates by notification: transfer is permitted except to countries
+    or territories the Central Government notifies as restricted. The obligation is
+    therefore to monitor for such notifications and respond to them.
+  act_ref: "s.16(1), DPDP Act, 2023"
+  rule_slot: CROSS_BORDER_CONDITIONS
+  audit_question: >-
+    Does a named owner monitor for notifications restricting transfer, and is there
+    a plan capable of relocating or terminating a flow if a destination the entity
+    relies upon becomes restricted?
+  test_procedure: "Enquire as to the monitoring arrangement and owner; inspect contingency planning for principal destinations."
+  evidence_expected:
+    - "Named owner and defined monitoring mechanism for notifications"
+    - "Contingency assessment for each principal destination"
+    - "Contractual rights enabling relocation of processing if required"
+  scoring:
+    "0": "No monitoring. A restriction would not be noticed until it caused a problem."
+    "2": "Monitoring is informal, dependent on external counsel alerts, with no contingency assessment for principal destinations."
+    "4": "A named owner monitors systematically, contingency plans exist for principal destinations, and contracts contain rights enabling relocation of processing."
+  severity: medium
+  weight: 1.0
+  penalty_entry: 7
+
+- id: XBD-03
+  domain: XBD
+  title: "Stricter sectoral localisation requirements identified and met"
+  obligation: >-
+    Nothing in section 16 restricts the applicability of any law in force in India
+    that provides a higher degree of protection for or restriction on the transfer
+    of personal data outside India.
+  act_ref: "s.16(2), DPDP Act, 2023"
+  rule_slot: CROSS_BORDER_CONDITIONS
+  audit_question: >-
+    Has the entity identified sectoral requirements binding more tightly than the
+    Act — such as payment system data localisation directions, or insurance and
+    telecom record requirements — and can it evidence compliance with them?
+  test_procedure: "Inspect the sectoral requirements analysis; test compliance evidence for each applicable requirement."
+  evidence_expected:
+    - "Analysis of sectoral localisation and transfer requirements applicable to the entity"
+    - "Compliance evidence for each, including any regulator filings or audit reports"
+    - "Reconciliation of the transfer map against sectoral constraints"
+  scoring:
+    "0": "Sectoral requirements have not been considered; compliance is assessed against the Act alone."
+    "2": "Applicable requirements are identified but compliance is assumed rather than evidenced, or the transfer map has not been reconciled against them."
+    "4": "Sectoral requirements are identified with the specific instrument cited, compliance is evidenced, and the transfer map is reconciled against each constraint."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+  applicability:
+    requires: [regulated_sector]
+
+- id: XBD-04
+  domain: XBD
+  title: "Transfer safeguards and transparency"
+  obligation: >-
+    Responsibility for processing carried out on the Data Fiduciary's behalf
+    continues irrespective of location, and the identities of recipients must be
+    disclosable to a Data Principal on request.
+  act_ref: "s.8(1), s.11(1)(b), s.16, DPDP Act, 2023"
+  rule_slot: CROSS_BORDER_CONDITIONS
+  audit_question: >-
+    Are offshore recipients subject to the same contractual safeguards as domestic
+    ones, and is the fact of transfer outside India disclosed where relevant to the
+    Data Principal?
+  test_procedure: "Inspect offshore recipient contracts for equivalence of safeguards; inspect notice content for transfer disclosure."
+  evidence_expected:
+    - "Contracts with offshore recipients containing equivalent safeguard obligations"
+    - "Notice or disclosure referring to processing outside India where applicable"
+    - "Assurance evidence for offshore recipients"
+  scoring:
+    "0": "Offshore recipients operate without equivalent safeguards and transfers are undisclosed."
+    "2": "Contracts largely mirror domestic terms but assurance over offshore recipients is weaker, or transfer is not disclosed to Data Principals."
+    "4": "Offshore recipients are bound by equivalent safeguards with commensurate assurance, and transfer outside India is disclosed where relevant."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7

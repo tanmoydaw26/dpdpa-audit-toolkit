@@ -1,0 +1,415 @@
+# =============================================================================
+# DPDPA CONTROL LIBRARY — 04: SECURITY & BREACH
+# Domains: SEC (Security Safeguards), BRC (Breach Notification)
+# Schema documented in 01_foundation.yaml
+# =============================================================================
+#
+# NOTE ON PENALTY WEIGHTING
+#   These two domains carry the two highest penalty entries in the Schedule —
+#   up to INR 250 crore for s.8(5) and up to INR 200 crore for s.8(6). Control
+#   weights here are set accordingly. Note also the construction of s.8(5): the
+#   duty is to take reasonable safeguards to PREVENT a breach, so exposure can
+#   arise from inadequate safeguards alone, without any breach having occurred.
+# =============================================================================
+
+controls:
+
+# -----------------------------------------------------------------------------
+# SEC — SECURITY SAFEGUARDS
+# -----------------------------------------------------------------------------
+
+- id: SEC-01
+  domain: SEC
+  title: "Reasonable security safeguards programme defined and owned"
+  obligation: >-
+    A Data Fiduciary must protect personal data in its possession or under its
+    control, including in respect of any processing undertaken by it or on its
+    behalf by a Data Processor, by taking reasonable security safeguards to prevent
+    a personal data breach.
+  act_ref: "s.8(5), DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Is there a defined, owned and approved set of security safeguards for personal
+    data specifically — mapped to the measures the Rules prescribe — rather than a
+    general IT security posture assumed to be sufficient?
+  test_procedure: "Inspect the safeguards standard and its mapping to prescribed measures; enquire of the owner; corroborate implementation for a sample of measures."
+  evidence_expected:
+    - "Approved security standard applicable to personal data, with named owner"
+    - "Mapping of implemented controls to each prescribed safeguard"
+    - "Evidence of periodic review and of gaps being tracked"
+  scoring:
+    "0": "No defined safeguards for personal data. Security is assumed to be adequate because general IT controls exist."
+    "2": "A general information security programme exists, but it has not been mapped to the safeguards the Rules prescribe, so coverage against the statutory standard is unknown."
+    "4": "A personal-data-specific safeguards standard is approved and owned, explicitly mapped to each prescribed measure, with residual gaps tracked and periodically reviewed."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 1
+
+- id: SEC-02
+  domain: SEC
+  title: "Access control and least privilege over personal data"
+  obligation: >-
+    Reasonable security safeguards include controls that restrict access to
+    personal data to those who require it, as part of appropriate technical and
+    organisational measures.
+  act_ref: "s.8(4), s.8(5), DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Is access to personal data granted on least privilege, subject to periodic
+    recertification, and promptly revoked on role change or exit — including for
+    engineers with production database access and for vendor accounts?
+  test_procedure: "Inspect access lists against role requirements; test leaver revocation for a sample; re-perform a privilege review for one high-risk system."
+  evidence_expected:
+    - "Role-based access model with documented entitlements per role"
+    - "Periodic access recertification records with evidence of revocations"
+    - "Leaver and role-change revocation testing, including vendor accounts"
+  scoring:
+    "0": "Access is broadly granted; production personal data is widely readable and there is no recertification."
+    "2": "A role model exists but privilege creep is uncontrolled — standing production access for engineering, stale vendor accounts, recertification overdue or performed as a rubber stamp."
+    "4": "Least privilege is enforced with just-in-time or approval-gated access to production personal data, recertification is timely and evidenced with actual revocations, and leaver revocation testing passes."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 1
+
+- id: SEC-03
+  domain: SEC
+  title: "Encryption, masking or obfuscation of personal data"
+  obligation: >-
+    Reasonable security safeguards are understood to include measures such as
+    encryption, obfuscation, masking or the use of virtual tokens to protect
+    personal data.
+  act_ref: "s.8(5) read with the Rules, DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Is personal data protected in transit and at rest, and is it masked or
+    tokenised in non-production environments, logs, analytics extracts and support
+    tooling?
+  test_procedure: "Inspect encryption configuration for transport and storage; test non-production environments and logs for unmasked personal data."
+  evidence_expected:
+    - "Transport and at-rest encryption configuration with key management"
+    - "Masking or tokenisation in non-production, logs and analytics extracts"
+    - "Evidence of testing for unmasked personal data outside production"
+  scoring:
+    "0": "Personal data is unencrypted at rest, or production data is copied unmasked into test environments as standard practice."
+    "2": "Transport and at-rest encryption are in place for principal systems, but non-production environments, logs or support tools still contain unmasked personal data."
+    "4": "Encryption covers transit and rest with managed keys, non-production data is masked or synthetic, logs and analytics extracts are scrubbed, and testing confirms no unmasked personal data outside production."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 1
+
+- id: SEC-04
+  domain: SEC
+  title: "Logging, monitoring and detection"
+  obligation: >-
+    Safeguards to prevent a personal data breach include the ability to detect
+    unauthorised access, and the retention of logs to enable investigation.
+  act_ref: "s.8(5) read with the Rules, DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Are access and activity logs over personal data captured, retained for the
+    prescribed period, protected from tampering, and actively monitored with
+    alerting — as opposed to retained but never examined?
+  test_procedure: "Inspect logging coverage and retention configuration; test alerting by reviewing recent detections and their handling; assess log integrity controls."
+  evidence_expected:
+    - "Logging coverage across systems holding personal data, including administrative access"
+    - "Retention configuration meeting the prescribed period, with tamper protection"
+    - "Alert definitions and evidence of alerts investigated and closed"
+  scoring:
+    "0": "Access to personal data is not logged, or logs are retained for days and never reviewed."
+    "2": "Logging exists with adequate retention but monitoring is passive — logs are available for post-incident investigation with no alerting on anomalous access."
+    "4": "Comprehensive tamper-protected logging is retained for the prescribed period, anomalous access generates alerts, and there is evidence of alerts being investigated and closed."
+  severity: high
+  weight: 1.2
+  penalty_entry: 1
+
+- id: SEC-05
+  domain: SEC
+  title: "Vulnerability management and patching"
+  obligation: >-
+    Taking reasonable safeguards to prevent a breach requires identification and
+    remediation of known vulnerabilities in systems processing personal data.
+  act_ref: "s.8(5), DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Are systems holding personal data scanned and penetration tested on a defined
+    cycle, with findings remediated to timescales tied to severity, and is the
+    remediation backlog aged and reported?
+  test_procedure: "Inspect scan and test reports; test remediation timeliness against stated timescales; review the aged backlog for overdue critical findings."
+  evidence_expected:
+    - "Vulnerability scan and penetration test reports for the current cycle"
+    - "Remediation timescales by severity and performance against them"
+    - "Aged backlog with escalation of overdue high-severity items"
+  scoring:
+    "0": "No scanning or testing of systems holding personal data."
+    "2": "Scanning occurs and tests are commissioned, but remediation timescales are undefined or routinely exceeded, with critical findings ageing in the backlog."
+    "4": "Scanning and testing run on a defined cycle, remediation meets severity-based timescales, and the aged backlog is reported to governance with overdue items escalated."
+  severity: high
+  weight: 1.2
+  penalty_entry: 1
+
+- id: SEC-06
+  domain: SEC
+  title: "Secure development and change control"
+  obligation: >-
+    Appropriate technical and organisational measures extend to the process by
+    which systems processing personal data are built and changed.
+  act_ref: "s.8(4), s.8(5), DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Do changes to systems processing personal data pass through security review,
+    testing and approval, with secrets management and code review enforced rather
+    than advisory?
+  test_procedure: "Inspect the change control process; sample recent changes to personal-data systems for evidence of review and approval; test secrets handling in the repository."
+  evidence_expected:
+    - "Change control procedure with mandatory security review gates"
+    - "Sample change records showing review and approval before deployment"
+    - "Secrets management implementation and evidence of repository scanning"
+  scoring:
+    "0": "No change control over systems processing personal data; credentials appear in code or configuration."
+    "2": "Change control exists but security review is advisory and frequently bypassed for expedited releases; secrets management is partial."
+    "4": "Security review is a mandatory gate with evidence of enforcement, code review is required, secrets are centrally managed, and repository scanning confirms no embedded credentials."
+  severity: high
+  weight: 1.1
+  penalty_entry: 1
+
+- id: SEC-07
+  domain: SEC
+  title: "Backup, recovery and integrity"
+  obligation: >-
+    Safeguards are understood to include measures for continued processing in the
+    event of loss of availability, including backups, and for maintaining the
+    integrity of personal data.
+  act_ref: "s.8(4), s.8(5) read with the Rules, DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Are backups of personal data taken, encrypted, access-controlled and
+    restore-tested — and is the retention and erasure position for backups
+    reconciled with the erasure obligation?
+  test_procedure: "Inspect backup configuration and encryption; review restore test records; assess how erasure requests are reconciled against backup media."
+  evidence_expected:
+    - "Backup configuration with encryption and restricted access"
+    - "Restore test records with dates and outcomes"
+    - "Documented position on erasure and backups, including re-erasure on restore"
+  scoring:
+    "0": "Backups are absent, unencrypted, or have never been restore-tested."
+    "2": "Backups are taken and encrypted, but restore testing is infrequent and the interaction between backups and the erasure obligation is unaddressed."
+    "4": "Backups are encrypted and access-controlled, restore testing is periodic and evidenced, and a documented position governs erasure in backups including re-erasure following restore."
+  severity: high
+  weight: 1.1
+  penalty_entry: 1
+
+- id: SEC-08
+  domain: SEC
+  title: "Personnel, endpoint and physical safeguards"
+  obligation: >-
+    Organisational safeguards extend to the people and devices through which
+    personal data is accessed, and to physical records where digitised data
+    originates.
+  act_ref: "s.8(4), s.8(5), DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Are personnel with access to personal data subject to background verification
+    and confidentiality obligations, are endpoints managed and encrypted, and is
+    data exfiltration controlled — including via support tooling and bulk export?
+  test_procedure: "Inspect personnel screening and confidentiality records; test endpoint management coverage; assess controls over bulk export and removable media."
+  evidence_expected:
+    - "Background verification and confidentiality undertakings for personnel with access"
+    - "Endpoint management and encryption coverage reports"
+    - "Controls over bulk export, removable media and screen capture in support tooling"
+  scoring:
+    "0": "No screening, no confidentiality undertakings, unmanaged endpoints, and unrestricted bulk export."
+    "2": "Screening and undertakings are in place and endpoints are largely managed, but bulk export from administrative and support tools is unconstrained and unmonitored."
+    "4": "Screening and confidentiality obligations are complete, endpoint coverage is near-total and evidenced, and bulk export is gated by approval and monitored with alerting."
+  severity: high
+  weight: 1.1
+  penalty_entry: 1
+
+- id: SEC-09
+  domain: SEC
+  title: "Effectiveness of safeguards independently tested"
+  obligation: >-
+    The standard in section 8(5) is reasonableness, which is assessed against
+    outcomes rather than intent. An entity relying on untested controls cannot
+    demonstrate that its safeguards are reasonable.
+  act_ref: "s.8(5), DPDP Act, 2023"
+  rule_slot: SECURITY_SAFEGUARDS
+  audit_question: >-
+    Has the effectiveness of the safeguards been independently tested — internal
+    audit, external assessment, red team — and were the findings remediated and
+    retested?
+  test_procedure: "Inspect independent assessment reports and management responses; test whether findings were remediated and validated by retest."
+  evidence_expected:
+    - "Independent assessment or audit reports covering personal data safeguards"
+    - "Management responses with owners and dates"
+    - "Retest evidence confirming remediation"
+  scoring:
+    "0": "Safeguards have never been independently tested."
+    "2": "Independent testing has occurred but findings remain open beyond their due dates, or remediation was accepted without retest."
+    "4": "Independent testing occurs on a defined cycle, findings are tracked to closure with owners and dates, and remediation is validated by retest."
+  severity: high
+  weight: 1.2
+  penalty_entry: 1
+
+# -----------------------------------------------------------------------------
+# BRC — PERSONAL DATA BREACH NOTIFICATION
+# -----------------------------------------------------------------------------
+
+- id: BRC-01
+  domain: BRC
+  title: "Personal data breach correctly defined in internal procedure"
+  obligation: >-
+    A personal data breach means any unauthorised processing of personal data or
+    accidental disclosure, acquisition, sharing, use, alteration, destruction or
+    loss of access to personal data that compromises its confidentiality, integrity
+    or availability.
+  act_ref: 's.2, DPDP Act, 2023 (definition of "personal data breach"), read with s.8(6)'
+  rule_slot: null
+  audit_question: >-
+    Does the internal definition match the statutory one — capturing loss of
+    availability and integrity, accidental internal disclosure, and unauthorised
+    internal access, not merely external attack?
+  test_procedure: "Inspect the incident procedure definition against the statutory wording; test classification of a sample of past incidents against it."
+  evidence_expected:
+    - "Incident procedure reproducing the statutory definition"
+    - "Classification criteria distinguishing a personal data breach from other incidents"
+    - "Sample of past incidents classified against the definition"
+  scoring:
+    "0": "No definition, or one confined to external cyber attack, so availability loss and internal disclosure are never treated as breaches."
+    "2": "The definition is broadly aligned but applied narrowly in practice, with availability incidents and accidental internal disclosure routinely misclassified."
+    "4": "The definition mirrors the statutory scope, classification criteria are documented and applied consistently, and testing of past incidents confirms correct classification."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 2
+
+- id: BRC-02
+  domain: BRC
+  title: "Detection and escalation capability"
+  obligation: >-
+    The obligation to intimate a breach presupposes the capability to become aware
+    of it. Detection and internal escalation must be sufficient to bring a breach
+    to the attention of those responsible for notification within the prescribed
+    window.
+  act_ref: "s.8(5), s.8(6), DPDP Act, 2023"
+  rule_slot: BREACH_INTIMATION
+  audit_question: >-
+    How would the entity learn of a breach, and how quickly would it reach the
+    person accountable for notification — including breaches originating at a
+    processor or reported by a customer or researcher?
+  test_procedure: "Inspect detection sources and escalation paths; measure escalation time in recent incidents; test the intake route for externally reported breaches."
+  evidence_expected:
+    - "Detection sources including monitoring, processor notification and external reports"
+    - "Escalation path with defined timescales to the accountable owner"
+    - "Measured escalation times from recent incidents"
+  scoring:
+    "0": "No defined detection or escalation. A breach would surface incidentally, and there is no route for an outsider to report one."
+    "2": "Detection and escalation exist for internally detected incidents, but processor-originated and externally reported breaches have no defined intake, and escalation time is unmeasured."
+    "4": "Multiple detection sources feed a defined escalation path with timescales that fit inside the notification window, externally reported breaches have a published intake route, and escalation times are measured."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 2
+
+- id: BRC-03
+  domain: BRC
+  title: "Intimation to the Board in the prescribed form and time"
+  obligation: >-
+    In the event of a personal data breach, the Data Fiduciary must give the Board
+    intimation of the breach in such form and manner as may be prescribed.
+  act_ref: "s.8(6), DPDP Act, 2023"
+  rule_slot: BREACH_INTIMATION
+  audit_question: >-
+    Is the prescribed form, content and timing of intimation to the Board built
+    into the incident runbook, with a pre-drafted template and a named signatory
+    available out of hours?
+  test_procedure: "Inspect the runbook and notification template against the prescribed requirements; test the availability of the signatory and the submission channel."
+  evidence_expected:
+    - "Runbook step with the prescribed timescale and content requirements"
+    - "Pre-drafted intimation template covering every prescribed field"
+    - "Named signatory with an out-of-hours deputy, and a tested submission route"
+  scoring:
+    "0": "No process for intimating the Board. The requirement has not been operationalised."
+    "2": "The runbook references notification but omits the prescribed content fields, or depends on drafting from scratch under time pressure with a single named signatory and no deputy."
+    "4": "A pre-drafted template covers every prescribed field, the timescale is embedded with escalation, the signatory has a deputy, and the submission route has been tested."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 2
+  citation_caution: >-
+    The notification timescale and any initial-versus-detailed reporting split
+    must be confirmed against the notified Rules. This control cannot be scored
+    against a specific deadline until the BREACH_INTIMATION slot is populated.
+
+- id: BRC-04
+  domain: BRC
+  title: "Intimation to each affected Data Principal"
+  obligation: >-
+    The Data Fiduciary must give intimation of a personal data breach to each
+    affected Data Principal, in such form and manner as may be prescribed.
+  act_ref: "s.8(6), DPDP Act, 2023"
+  rule_slot: BREACH_INTIMATION
+  audit_question: >-
+    Can the entity identify every affected Data Principal and reach each of them
+    within the prescribed period — including individuals whose only contact detail
+    is stale, and dormant accounts?
+  test_procedure: "Re-performance: for a hypothetical breach of a defined dataset, require the entity to produce the affected population and demonstrate the notification mechanism at that volume."
+  evidence_expected:
+    - "Capability to derive the affected population from a defined breach scope"
+    - "Mass notification mechanism tested at realistic volume"
+    - "Approach for individuals with stale or absent contact details"
+  scoring:
+    "0": "No capability to identify affected individuals or to notify them at scale. The obligation is unaddressed."
+    "2": "The affected population could be derived with manual effort, but there is no tested mass notification capability, and no approach for unreachable individuals."
+    "4": "The affected population can be derived promptly from breach scope, mass notification is tested at realistic volume across channels, and a documented approach covers unreachable individuals."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 2
+
+- id: BRC-05
+  domain: BRC
+  title: "Breach register and documentation"
+  obligation: >-
+    Demonstrating compliance with section 8(6), and relying on mitigation as a
+    factor in the determination of penalty under section 33(2), both require a
+    contemporaneous record of breaches, decisions and actions taken.
+  act_ref: "s.8(6), s.33(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is every incident recorded with its classification, the reasoning where it was
+    assessed as not a personal data breach, notification decisions and timings, and
+    remedial action?
+  test_procedure: "Inspect the breach register for completeness; reconcile against security incident tickets to detect breaches recorded only as technical incidents."
+  evidence_expected:
+    - "Breach register with classification, reasoning, notification record and remediation"
+    - "Reconciliation against security incident tickets"
+    - "Documented reasoning where an incident was assessed as not notifiable"
+  scoring:
+    "0": "No breach register. Incidents exist only as technical tickets with no privacy assessment."
+    "2": "A register exists but records outcomes without reasoning, so a decision not to notify cannot be defended after the fact; reconciliation to incident tickets is not performed."
+    "4": "A complete register records classification with reasoning, notification decisions and timings, and remediation, and is reconciled to incident tickets on a defined cycle."
+  severity: high
+  weight: 1.2
+  penalty_entry: 2
+
+- id: BRC-06
+  domain: BRC
+  title: "Breach response rehearsed and post-incident remediation tracked"
+  obligation: >-
+    Section 33(2) makes the promptness, effectiveness and timeliness of mitigating
+    action an express factor in determining the quantum of any penalty, which makes
+    tested response capability directly material to exposure.
+  act_ref: "s.8(6), s.33(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Has the breach response been rehearsed within the last twelve months against a
+    scenario involving notification to the Board and to Data Principals, and were
+    the lessons tracked to closure?
+  test_procedure: "Inspect rehearsal records and after-action reports; test whether identified deficiencies were remediated."
+  evidence_expected:
+    - "Tabletop or simulation records including a notification-triggering scenario"
+    - "After-action report with identified deficiencies and owners"
+    - "Evidence of deficiencies remediated and retested"
+  scoring:
+    "0": "The breach response has never been rehearsed."
+    "2": "A rehearsal has occurred but did not exercise the notification decision or the mass-notification mechanism, or lessons were recorded without follow-through."
+    "4": "Rehearsals occur at least annually against notification-triggering scenarios, exercise both Board and Data Principal intimation, and after-action items are tracked to closure and retested."
+  severity: high
+  weight: 1.1
+  penalty_entry: 2

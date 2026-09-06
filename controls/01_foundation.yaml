@@ -1,0 +1,510 @@
+# =============================================================================
+# DPDPA CONTROL LIBRARY — 01: FOUNDATION
+# Domains: APP (Applicability), GOV (Governance), PUR (Purpose & Minimisation)
+# =============================================================================
+#
+# SCHEMA
+#   id                 Unique control identifier, <DOMAIN>-<NN>
+#   domain             Domain code, must exist in domains.yaml
+#   title              Short control name
+#   obligation         What the law requires, in plain terms
+#   act_ref            DPDP Act, 2023 provision(s) — VERIFIED_ACT
+#   rule_slot          Key into citations.yaml rule_slots, or null
+#   audit_question     What the auditor actually asks / tests
+#   test_procedure     How to test it — inspection, enquiry, observation, re-performance
+#   evidence_expected  Artefacts that substantiate a score of 3 or 4
+#   scoring            Anchored descriptors for levels 0, 2 and 4.
+#                      Levels 1 and 3 are intermediate positions between them.
+#   severity           critical | high | medium | low  (drives remediation priority)
+#   weight             Relative weight within the domain (1.0 = standard)
+#   penalty_entry      Schedule entry number in citations.yaml, or null.
+#                      Populated where the control tests an obligation the Act
+#                      states directly. Null where it tests supporting practice
+#                      inferred from an obligation — training, design-stage
+#                      review, board engagement, inquiry readiness — so that
+#                      penalty exposure is never asserted beyond the statute.
+#                      Two controls on the same provision may therefore differ:
+#                      GOV-05 tests the s.8(4) measures themselves and carries
+#                      entry 7; GOV-06 tests the training that supports them and
+#                      carries none.
+#   applicability      requires: [profile flags that must ALL be true]
+#                      excluded_if: [profile flags that must ALL be false]
+#                      Absent or empty means universally applicable.
+# =============================================================================
+
+controls:
+
+# -----------------------------------------------------------------------------
+# APP — APPLICABILITY & ROLE DETERMINATION
+# -----------------------------------------------------------------------------
+
+- id: APP-01
+  domain: APP
+  title: "Territorial and material applicability assessed"
+  obligation: >-
+    The Act applies to processing of digital personal data within India, and to
+    processing outside India where it is in connection with any activity related
+    to offering goods or services to Data Principals within India. The entity
+    must have determined, and be able to explain, why the Act applies to it and
+    to which processing activities.
+  act_ref: "s.3(a), s.3(b), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Has the entity documented a reasoned applicability assessment covering both
+    India-based processing and any offshore processing connected with offering
+    goods or services into India? Does it correctly treat personal data collected
+    in non-digital form and subsequently digitised as in scope?
+  test_procedure: "Inspect the applicability assessment; enquire of legal/privacy owner; corroborate against the entity's actual product footprint and entity structure."
+  evidence_expected:
+    - "Written applicability assessment or scoping memorandum, dated and owned"
+    - "List of legal entities, branches and offshore affiliates that process personal data of individuals in India"
+    - "Confirmation of treatment of digitised paper records"
+  scoring:
+    "0": "No applicability assessment exists. Scope has never been formally determined."
+    "2": "An informal or partial view exists, typically covering the India entity only, with offshore processing or digitised records unaddressed."
+    "4": "A documented, dated and reviewed assessment covers all entities and processing activities, correctly addresses extraterritorial reach and digitised records, and is refreshed when the product or entity footprint changes."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: APP-02
+  domain: APP
+  title: "Role determination — Data Fiduciary versus Data Processor"
+  obligation: >-
+    The entity must correctly determine, for each processing activity, whether it
+    acts as a Data Fiduciary (alone or jointly), determining the purpose and means
+    of processing, or as a Data Processor acting on another's behalf.
+  act_ref: 's.2, DPDP Act, 2023 (definitions of "Data Fiduciary", "Data Processor" and "Data Principal"), read with s.8(1)'
+  rule_slot: null
+  audit_question: >-
+    Is there an activity-level role mapping? Where the entity claims to be only a
+    Data Processor, does the evidence support that it does not determine purpose
+    or means — including for any analytics, product improvement, model training or
+    marketing it performs on the same data?
+  test_procedure: "Inspect role mapping; re-perform the determination for a sample of three activities, testing the claim against contracts and actual data use."
+  evidence_expected:
+    - "Activity-level register recording role assumed and the basis for it"
+    - "Customer or client contracts supporting a processor characterisation"
+    - "Evidence that no independent purposes are pursued on processor-held data"
+  scoring:
+    "0": "Roles have not been considered, or a single blanket role is asserted across all activities."
+    "2": "Roles are asserted at entity level rather than activity level; processor claims are not evidenced against actual data use."
+    "4": "Roles are determined per activity, documented with reasoning, consistent with contracts and observed data flows, and re-tested when new uses such as model training are introduced."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: APP-03
+  domain: APP
+  title: "Exemptions claimed are valid and evidenced"
+  obligation: >-
+    Exemptions under section 17 apply only in the circumstances specified. The
+    startup and class-based exemption under section 17(3) operates only in favour
+    of classes of Data Fiduciary actually notified by the Central Government, and
+    covers only the specified provisions.
+  act_ref: "s.17(1), s.17(2), s.17(3), s.17(4), DPDP Act, 2023"
+  rule_slot: STARTUP_EXEMPTION_CLASSES
+  audit_question: >-
+    Does the entity claim any exemption? If it claims the section 17(3) route, can
+    it show that it falls within a class actually notified, rather than relying on
+    self-identification as a startup? Is the claim limited to the provisions the
+    exemption actually reaches?
+  test_procedure: "Inspect the exemption claim and supporting notification; test the scope claimed against the provisions the exemption covers."
+  evidence_expected:
+    - "Written exemption analysis identifying the specific limb relied upon"
+    - "Evidence of falling within a notified class, where section 17(3) is relied upon"
+    - "Confirmation that obligations outside the exemption's scope continue to be met"
+  scoring:
+    "0": "An exemption is assumed or asserted with no analysis, or a broad exemption is claimed on the strength of being 'a startup'."
+    "2": "An analysis exists but overstates the exemption's reach, or has not been re-tested against the notified classes."
+    "4": "Either no exemption is claimed, or the claim is narrowly scoped, evidenced against a notified class, and obligations outside its reach are demonstrably still met."
+  severity: high
+  weight: 1.0
+  penalty_entry: 7
+  applicability:
+    requires: [claims_exemption]
+
+- id: APP-04
+  domain: APP
+  title: "Significant Data Fiduciary exposure assessed"
+  obligation: >-
+    The Central Government may notify a Data Fiduciary or class of Data
+    Fiduciaries as Significant, having regard to the volume and sensitivity of
+    personal data processed, risk to the rights of Data Principals, potential
+    effects on the sovereignty and integrity of India, risk to electoral
+    democracy, security of the State and public order.
+  act_ref: "s.10(1), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Has the entity assessed its likelihood of designation against the section
+    10(1) factors, and does it have a plan to stand up section 10(2) capability
+    within a realistic period of being notified?
+  test_procedure: "Inspect the self-assessment against each statutory factor; enquire as to readiness planning."
+  evidence_expected:
+    - "Self-assessment against each of the section 10(1) factors"
+    - "Readiness plan for DPO appointment, DPIA, independent audit and algorithmic due diligence"
+    - "Board or management minute acknowledging the exposure"
+  scoring:
+    "0": "Designation exposure has never been considered."
+    "2": "Exposure is informally recognised but unassessed against the statutory factors, with no readiness plan."
+    "4": "A documented assessment against each factor exists, is periodically refreshed, and a costed readiness plan is approved so that designation would not require a standing start."
+  severity: medium
+  weight: 0.9
+  penalty_entry: null
+  excluded_if_note: "Scored for all entities; entities already notified as SDF are audited under the SDF domain instead."
+  applicability:
+    excluded_if: [is_sdf]
+
+- id: APP-05
+  domain: APP
+  title: "Commencement and phasing tracked against the compliance plan"
+  obligation: >-
+    Provisions of the Act and the Rules come into force on such dates as are
+    appointed, which may differ across provisions. The entity must know which
+    obligations are presently enforceable and which are forthcoming.
+  act_ref: "s.1(2), DPDP Act, 2023"
+  rule_slot: COMMENCEMENT_PHASING
+  audit_question: >-
+    Does the entity maintain a current view of which provisions are in force, with
+    its remediation plan sequenced against those dates rather than against an
+    assumption that everything is either live or not yet live?
+  test_procedure: "Inspect the compliance calendar; corroborate the dates recorded against the commencement notification."
+  evidence_expected:
+    - "Compliance calendar mapping obligations to commencement dates"
+    - "Remediation plan sequenced against those dates"
+    - "Evidence of monitoring for further notifications"
+  scoring:
+    "0": "No awareness of phasing; the framework is treated as a single undifferentiated deadline, or as not yet relevant at all."
+    "2": "Phasing is known informally but not reflected in how remediation is sequenced or prioritised."
+    "4": "A maintained calendar tracks each tranche, remediation is sequenced against it, and a named owner monitors for further notifications and Board guidance."
+  severity: high
+  weight: 1.1
+  penalty_entry: null
+
+# -----------------------------------------------------------------------------
+# GOV — GOVERNANCE, ACCOUNTABILITY & RECORDS
+# -----------------------------------------------------------------------------
+
+- id: GOV-01
+  domain: GOV
+  title: "Accountability for compliance, including processor activity"
+  obligation: >-
+    A Data Fiduciary is responsible for complying with the Act in respect of any
+    processing undertaken by it or on its behalf by a Data Processor,
+    notwithstanding any agreement to the contrary or the Data Principal's failure
+    to carry out their duties.
+  act_ref: "s.8(1), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is there a named, senior accountable owner for DPDPA compliance whose remit
+    expressly extends to processing carried out by processors, with sufficient
+    authority and resourcing to act?
+  test_procedure: "Inspect the appointment and remit; enquire of the owner as to authority, budget and escalation path; corroborate with governance minutes."
+  evidence_expected:
+    - "Written appointment recording name, role and remit"
+    - "Governance forum terms of reference and minutes evidencing oversight"
+    - "Evidence of resourcing and of escalation to senior management or the board"
+  scoring:
+    "0": "No named owner. Accountability is diffuse or assumed to sit with IT or with an offshore group function that has no India mandate."
+    "2": "An owner is named but the remit excludes processor activity, or the role lacks authority, budget or a reporting line into senior management."
+    "4": "A senior owner is formally appointed with an express remit covering processors, reports periodically to a governance forum or the board, and can evidence decisions actually taken under that authority."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: GOV-02
+  domain: GOV
+  title: "Record of processing activities maintained"
+  obligation: >-
+    Although the Act does not name a register in terms, the burden of
+    demonstrating consent under section 6(10) and the accountability duty under
+    section 8(1) cannot be discharged without a reliable record of what personal
+    data is processed, for what purpose, on what basis, and with whom it is shared.
+  act_ref: "s.6(10), s.8(1), DPDP Act, 2023 (evidential requirement)"
+  rule_slot: null
+  audit_question: >-
+    Is there a complete, current record of processing activities capturing data
+    categories, purposes, lawful basis, retention, recipients, processors and
+    cross-border flows? Is it reconciled to reality rather than maintained as a
+    one-off documentation exercise?
+  test_procedure: "Inspect the register; test completeness by selecting two systems not obviously covered and tracing them; test currency against recent product changes."
+  evidence_expected:
+    - "Record of processing activities with the fields above"
+    - "Evidence of periodic review with dates and reviewer"
+    - "Reconciliation to a system or application inventory"
+  scoring:
+    "0": "No record exists, or a partial spreadsheet exists that has not been updated since creation."
+    "2": "A register exists and covers major systems, but is incomplete at the edges — shadow systems, analytics stacks and vendor-hosted data are missing — and is not reconciled to an application inventory."
+    "4": "A complete register is reconciled to the application inventory, refreshed on a defined cycle and on material change, and demonstrably drives downstream artefacts such as notices and retention rules."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: GOV-03
+  domain: GOV
+  title: "Publication of DPO or contact person details"
+  obligation: >-
+    A Data Fiduciary must publish the business contact information of the Data
+    Protection Officer, if applicable, or of a person able to answer on its behalf
+    the questions of a Data Principal about the processing of their personal data.
+  act_ref: "s.8(8), DPDP Act, 2023"
+  rule_slot: DP_CONTACT_PUBLICATION
+  audit_question: >-
+    Are contact details published in a place a Data Principal would actually find
+    them, and does a real, monitored channel sit behind them that is capable of
+    answering substantive questions about processing?
+  test_procedure: "Inspect the published details on all customer-facing surfaces; re-perform by sending a substantive processing question through the channel and measuring the response."
+  evidence_expected:
+    - "Screenshots of published contact details on website, app and other surfaces"
+    - "Evidence of channel monitoring and ownership"
+    - "Sample of substantive questions received and answered"
+  scoring:
+    "0": "No contact details are published, or only a generic support form with no privacy routing."
+    "2": "Details are published but buried, inconsistent across surfaces, or route to an unmonitored mailbox or a team unable to answer processing questions."
+    "4": "Details are prominently and consistently published across all surfaces, the channel is monitored with defined ownership and service levels, and testing shows substantive questions are answered competently."
+  severity: high
+  weight: 1.0
+  penalty_entry: 7
+
+- id: GOV-04
+  domain: GOV
+  title: "Board and senior management oversight"
+  obligation: >-
+    Accountability under section 8(1) requires oversight proportionate to the
+    risk. For a Significant Data Fiduciary the Data Protection Officer is
+    expressly required to be responsible to the board of directors or similar
+    governing body, which sets the expected standard of engagement.
+  act_ref: "s.8(1), s.10(2)(a), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Does the board or an equivalent governing body receive periodic reporting on
+    data protection risk, breaches, rights-request volumes and remediation
+    progress, and is there evidence of it directing action?
+  test_procedure: "Inspect minutes and reporting packs for the last four cycles; test whether reported issues were tracked to closure."
+  evidence_expected:
+    - "Board or committee minutes referencing data protection matters"
+    - "Management information pack showing metrics reported"
+    - "Evidence of decisions taken and tracked to closure"
+  scoring:
+    "0": "No reporting to senior management or the board."
+    "2": "Ad hoc or incident-driven reporting only, with no defined cycle, metrics or follow-through on issues raised."
+    "4": "Periodic reporting on a defined cycle with meaningful metrics, evidenced challenge from the forum, and issues tracked to closure."
+  severity: medium
+  weight: 1.0
+  penalty_entry: null
+
+- id: GOV-05
+  domain: GOV
+  title: "Policies, standards and internal procedures"
+  obligation: >-
+    Appropriate technical and organisational measures under section 8(4) include
+    the documented policies and procedures by which the entity gives effect to its
+    obligations.
+  act_ref: "s.8(4), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is there an approved policy set covering notice, consent, rights handling,
+    retention, breach response, vendor management and children's data, mapped to
+    the Act, version-controlled and actually reflected in operational procedure?
+  test_procedure: "Inspect the policy set and approval records; test one policy against the operational procedure and system behaviour it purports to govern."
+  evidence_expected:
+    - "Approved policy set with version history and approver"
+    - "Mapping of policies to Act provisions"
+    - "Operational procedures or runbooks referenced by the policies"
+  scoring:
+    "0": "No DPDPA-specific policies. A generic IT or global privacy policy is relied upon without India mapping."
+    "2": "Policies exist but are unmapped to the Act, out of date, or demonstrably not followed in practice — the classic gap between an imported group policy and local operation."
+    "4": "An approved, version-controlled, Act-mapped policy set is in force, supported by operational runbooks, and testing confirms practice follows the documented procedure."
+  severity: medium
+  weight: 1.0
+  penalty_entry: 7
+
+- id: GOV-06
+  domain: GOV
+  title: "Training and awareness"
+  obligation: >-
+    Organisational measures under section 8(4) extend to ensuring that personnel
+    handling personal data understand their obligations, particularly those
+    operating consent, rights and breach processes.
+  act_ref: "s.8(4), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Have personnel in roles that touch personal data received DPDPA-specific
+    training, with role-tailored content for high-risk functions such as support,
+    marketing, engineering and procurement, and is completion tracked?
+  test_procedure: "Inspect training content and completion records; enquire of a sample of staff in high-risk roles to test practical understanding."
+  evidence_expected:
+    - "Training material specific to the Act, not generic privacy content"
+    - "Completion records by role with dates"
+    - "Role-specific modules for support, marketing, engineering and procurement"
+  scoring:
+    "0": "No training on the Act has been delivered."
+    "2": "Generic annual privacy training only, with no DPDPA content, no role tailoring and incomplete completion tracking."
+    "4": "Act-specific training is delivered to all relevant personnel with role-tailored modules for high-risk functions, completion is tracked and enforced, and sample enquiry confirms practical understanding."
+  severity: medium
+  weight: 0.9
+  penalty_entry: null
+
+- id: GOV-07
+  domain: GOV
+  title: "Evidence retention for demonstrating compliance"
+  obligation: >-
+    Where consent is relied upon, the Data Fiduciary bears the burden of proving
+    that notice was given and consent was obtained in accordance with the Act.
+    This requires retention of the underlying artefacts, not merely of the current
+    policy.
+  act_ref: "s.6(10), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Can the entity produce, for a Data Principal selected at random, the notice
+    text as presented at the time, the consent artefact, and the processing history
+    — or can it only produce today's policy?
+  test_procedure: "Re-perform: select two Data Principals at random and require production of the historical notice version, consent artefact and processing record."
+  evidence_expected:
+    - "Versioned archive of notice and consent text with effective dates"
+    - "Consent artefacts retrievable per Data Principal"
+    - "Documented evidence retention period aligned to limitation and inquiry risk"
+  scoring:
+    "0": "Only the current policy exists. Historical notice versions and consent artefacts are not retained or not retrievable."
+    "2": "Some artefacts are retained but cannot be reliably reconstructed per individual, or historical notice versions are missing so the artefact cannot be tied to what was actually shown."
+    "4": "Notice versions and consent artefacts are archived and jointly retrievable per Data Principal, and testing confirms the entity can reconstruct precisely what was presented and agreed to, and when."
+  severity: critical
+  weight: 1.2
+  penalty_entry: 7
+
+# -----------------------------------------------------------------------------
+# PUR — LAWFUL PURPOSE, MINIMISATION & ACCURACY
+# -----------------------------------------------------------------------------
+
+- id: PUR-01
+  domain: PUR
+  title: "Every processing activity has an identified lawful basis"
+  obligation: >-
+    Personal data may be processed only for a lawful purpose for which the Data
+    Principal has given consent, or for a certain legitimate use. A lawful purpose
+    is one not expressly forbidden by law.
+  act_ref: "s.4(1), s.4(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is a specific lawful basis — consent or a named section 7 legitimate use —
+    recorded for every processing activity in the register, with no activity left
+    unmapped or resting on a basis that does not exist under the Act?
+  test_procedure: "Inspect basis mapping for completeness; re-perform the determination for a sample of five activities, including at least one marketing and one analytics use."
+  evidence_expected:
+    - "Lawful basis recorded per activity in the processing register"
+    - "Reasoning for each legitimate use relied upon, citing the specific limb"
+    - "Evidence that no activity relies on a ground absent from the Act"
+  scoring:
+    "0": "Lawful basis has not been mapped, or is asserted only at policy level."
+    "2": "Basis is mapped for core activities but secondary uses such as analytics, personalisation, model training or marketing are unmapped or rest on an imported ground such as legitimate interests."
+    "4": "Every activity carries a specific, documented and defensible basis citing the exact provision, reviewed on change, with no reliance on grounds the Act does not contain."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: PUR-02
+  domain: PUR
+  title: "Data minimisation — collection limited to what is necessary"
+  obligation: >-
+    Consent signifies agreement to processing of only such personal data as is
+    necessary for the specified purpose, and any part of consent that purports to
+    extend beyond that is invalid to that extent.
+  act_ref: "s.6(1), s.6(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    For each collection point, is every field necessary for the stated purpose?
+    Are optional fields distinguished from mandatory ones, and has any field been
+    challenged and removed as a result of review?
+  test_procedure: "Inspect a sample of collection forms and API payloads field by field against stated purposes; test whether mandatory fields are genuinely necessary."
+  evidence_expected:
+    - "Field-level necessity analysis for principal collection points"
+    - "Distinction between mandatory and optional fields in the interface"
+    - "Change records showing fields removed following review"
+  scoring:
+    "0": "No necessity analysis. Forms collect whatever has accumulated historically."
+    "2": "Necessity is asserted at purpose level but not tested field by field; some fields are collected because a system requires them or because they may prove useful later."
+    "4": "Field-level necessity is documented and periodically re-tested, optional fields are clearly distinguished, and there is evidence of fields having actually been removed as unnecessary."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: PUR-03
+  domain: PUR
+  title: "Purpose limitation — no undisclosed secondary use"
+  obligation: >-
+    Processing must be for the specified purpose for which consent was given.
+    Personal data may not be repurposed for materially different uses without a
+    fresh lawful basis.
+  act_ref: "s.4(1), s.5(1), s.6(1), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Are there controls preventing personal data collected for one purpose being
+    used for another — particularly transaction data flowing into marketing, or
+    customer data into model training — and is a fresh basis obtained where the
+    purpose is materially new?
+  test_procedure: "Inspect data flows from primary systems into analytics, marketing and machine-learning environments; test each against the notice given at collection."
+  evidence_expected:
+    - "Data flow documentation from collection into secondary environments"
+    - "Purpose-compatibility assessments for secondary uses"
+    - "Evidence of fresh notice and consent where purposes were materially extended"
+  scoring:
+    "0": "Data moves freely between purposes with no assessment. Analytics and marketing draw on whatever is available."
+    "2": "Secondary uses are recognised and partially assessed, but at least one material use — commonly model training or enrichment — proceeds beyond the notice given."
+    "4": "Secondary use is gated by documented compatibility assessment, technically constrained where possible, and fresh notice and consent are obtained for materially new purposes with evidence of the gate having been enforced."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: PUR-04
+  domain: PUR
+  title: "Accuracy and completeness where data drives decisions or is shared"
+  obligation: >-
+    Where personal data is likely to be used to make a decision affecting the Data
+    Principal, or is likely to be disclosed to another Data Fiduciary, the Data
+    Fiduciary must ensure it is complete, accurate and consistent.
+  act_ref: "s.8(3), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Has the entity identified which processing produces decisions affecting Data
+    Principals or involves disclosure onward, and what controls assure accuracy,
+    completeness and consistency in those specific flows?
+  test_procedure: "Inspect the inventory of decisioning and disclosure flows; test accuracy controls including validation, reconciliation and correction propagation in a sample flow."
+  evidence_expected:
+    - "Inventory of decision-making and onward-disclosure flows"
+    - "Data quality controls: validation rules, reconciliation, exception handling"
+    - "Evidence that corrections propagate to downstream recipients and decisions"
+  scoring:
+    "0": "Decisioning and disclosure flows have not been identified; no accuracy controls specific to them."
+    "2": "Flows are known and general data quality controls exist, but corrections do not reliably propagate to downstream recipients or to decisions already made."
+    "4": "Decisioning and disclosure flows are inventoried, subject to defined accuracy and consistency controls, and corrections demonstrably propagate downstream with evidence of exception handling."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+  applicability:
+    excluded_if: [startup_exempt_s8_3]
+
+- id: PUR-05
+  domain: PUR
+  title: "Privacy considered at design stage for new processing"
+  obligation: >-
+    Appropriate technical and organisational measures under section 8(4) require
+    that new products, features and vendor engagements are assessed for
+    compliance before personal data is processed, not after.
+  act_ref: "s.8(4), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is there a gate in the product and procurement lifecycle requiring privacy
+    assessment before launch, and is there evidence of it having actually blocked
+    or changed a launch?
+  test_procedure: "Inspect the gate definition and completed assessments; test a sample of recent launches for whether the gate was applied before go-live."
+  evidence_expected:
+    - "Defined assessment gate in the product and procurement lifecycle"
+    - "Completed assessments for recent launches, dated before go-live"
+    - "Evidence of at least one launch changed or blocked as a result"
+  scoring:
+    "0": "No assessment gate. Privacy is considered after launch, if at all."
+    "2": "A gate exists on paper but is routinely bypassed under delivery pressure, or assessments are completed retrospectively to close the record."
+    "4": "The gate is embedded and enforced before go-live, with completed assessments predating launch and evidence of launches having been changed or blocked on privacy grounds."
+  severity: medium
+  weight: 1.0
+  penalty_entry: null

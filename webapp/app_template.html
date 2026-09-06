@@ -1,0 +1,1447 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DPDP Act audit workbench</title>
+<style>
+/* ==========================================================================
+   DPDP Act, 2023 — audit workbench
+   Two typefaces only, with one rule: prose is set in the serif, every figure
+   and label in the monospace. That is the logic of an audit workpaper — typed
+   narrative against ruled columns of numbers — and it does the work a third
+   UI face would otherwise do.
+   ========================================================================== */
+:root{
+  color-scheme: light;
+
+  --paper:#DCE3E4;      /* page — pale cool slate, the colour of file board */
+  --bond:#F6F8F7;       /* panels — near-white with the faintest green cast */
+  --bond-sink:#EDF1F0;  /* recessed panels */
+  --ink:#121E24;        /* text — deep petrol, not black */
+  --ink-soft:#4A5C64;
+  --ink-faint:#7C8C92;
+  --rule:#B4C1C3;
+  --rule-soft:#D2DBDB;
+  --indigo:#1D3C6E;     /* structure: statutory rail, headings, maturity */
+  --mark:#A32530;       /* the reviewer's pen: risk, gaps, shortfall — only */
+  --verified:#1C6A5A;   /* verified, compliant — only */
+  --amber:#8A5A11;      /* high severity */
+
+  --r0:#EFF2F1; --r1:#E9D8D7; --r2:#DCB4B2; --r3:#C57E7F; --r4:#A32530;
+
+  --serif:Constantia,Cambria,"Palatino Linotype",Palatino,"Iowan Old Style",Charter,Georgia,serif;
+  --mono:"Cascadia Mono","Cascadia Code",Consolas,"SF Mono",Menlo,"Roboto Mono","DejaVu Sans Mono",monospace;
+
+  --sp:16px;
+  --spine-w:262px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--serif); font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+a{color:var(--indigo)}
+:focus-visible{outline:2px solid var(--indigo); outline-offset:2px}
+
+/* ---- shared type devices ------------------------------------------------ */
+.lbl{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--ink-faint); display:block;
+}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.prose{max-width:74ch}
+.hint{font-family:var(--mono); font-size:11px; color:var(--ink-faint); line-height:1.5}
+
+/* ---- masthead ---------------------------------------------------------- */
+.masthead{
+  background:var(--ink); color:var(--bond);
+  padding:18px var(--sp) 15px; display:flex; flex-wrap:wrap; gap:18px;
+  align-items:flex-end; justify-content:space-between;
+  border-bottom:3px solid var(--indigo);
+}
+.masthead .lbl{color:#8FA3AB}
+.masthead h1{
+  font-size:25px; font-weight:600; letter-spacing:-.012em; margin:3px 0 2px;
+  line-height:1.15;
+}
+.mast-meta{
+  margin:0; font-family:var(--mono); font-size:11px; letter-spacing:.02em;
+  color:#9BB0B7;
+}
+.mast-actions{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.btn{
+  font-family:var(--mono); font-size:11px; letter-spacing:.06em;
+  text-transform:uppercase; background:transparent; color:var(--bond);
+  border:1px solid #43585F; padding:7px 12px; cursor:pointer;
+}
+.btn:hover{background:#1D2E36; border-color:#6D858D}
+.btn--go{background:var(--bond); color:var(--ink); border-color:var(--bond)}
+.btn--go:hover{background:#fff; color:var(--ink)}
+.savestate{font-family:var(--mono); font-size:10.5px; color:#8FA3AB; min-width:11ch}
+
+/* ---- view tabs --------------------------------------------------------- */
+.views{
+  display:flex; gap:0; background:var(--bond);
+  border-bottom:1px solid var(--rule); padding:0 var(--sp);
+  overflow-x:auto;
+}
+.tab{
+  font-family:var(--mono); font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; background:none; border:0;
+  border-bottom:3px solid transparent; padding:12px 16px; cursor:pointer;
+  color:var(--ink-soft); white-space:nowrap;
+}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--indigo); border-bottom-color:var(--indigo)}
+.tab .tally{color:var(--ink-faint); margin-left:7px}
+.tab[aria-selected="true"] .tally{color:var(--indigo)}
+
+/* ---- frame ------------------------------------------------------------- */
+.frame{display:flex; align-items:flex-start; gap:0}
+.spine{
+  width:var(--spine-w); flex:0 0 var(--spine-w);
+  position:sticky; top:0; max-height:100vh; overflow-y:auto;
+  background:var(--bond); border-right:1px solid var(--rule);
+  padding:var(--sp) 14px 40px;
+}
+.main{flex:1 1 auto; min-width:0; padding:var(--sp) var(--sp) 72px; max-width:1120px}
+
+/* ---- the spine: dashboard and navigation in one object ----------------- */
+.overall{border-bottom:1px solid var(--rule); padding-bottom:14px; margin-bottom:14px}
+.overall__figure{
+  font-family:var(--mono); font-size:42px; font-weight:600; line-height:1;
+  letter-spacing:-.03em; color:var(--indigo); font-variant-numeric:tabular-nums;
+}
+.overall__figure sup{font-size:18px; font-weight:400; top:-.85em; margin-left:1px}
+.overall__band{font-size:15px; font-weight:600; margin:4px 0 10px}
+.overall__note{font-family:var(--mono); font-size:10.5px; color:var(--ink-soft); line-height:1.5}
+
+/* The bar is quartered because the scale is quartered: the gridlines sit at
+   the 1, 2 and 3 anchors, so a fill is read against the scoring anchors
+   rather than as a bare proportion. */
+.bar{position:relative; height:9px; background:var(--bond-sink); border:1px solid var(--rule-soft)}
+.bar__fill{position:absolute; inset:0 auto 0 0; background:var(--indigo); transition:width .28s ease}
+.bar__ticks{position:absolute; inset:0; pointer-events:none;
+  background-image:linear-gradient(to right,transparent calc(25% - .5px),var(--rule) calc(25% - .5px),var(--rule) calc(25% + .5px),transparent calc(25% + .5px)),
+                   linear-gradient(to right,transparent calc(50% - .5px),var(--rule) calc(50% - .5px),var(--rule) calc(50% + .5px),transparent calc(50% + .5px)),
+                   linear-gradient(to right,transparent calc(75% - .5px),var(--rule) calc(75% - .5px),var(--rule) calc(75% + .5px),transparent calc(75% + .5px));
+}
+.bar--tall{height:13px}
+
+.spine__all{width:100%; text-align:left; background:none; border:0; border-top:1px solid var(--rule-soft); padding:9px 6px; cursor:pointer}
+.domrow{
+  display:grid; grid-template-columns:34px 1fr 40px; gap:7px; align-items:center;
+  width:100%; text-align:left; background:none; border:0;
+  border-top:1px solid var(--rule-soft); padding:7px 6px; cursor:pointer;
+}
+.domrow:hover{background:var(--bond-sink)}
+.domrow[aria-current="true"]{background:var(--bond-sink); box-shadow:inset 3px 0 0 var(--indigo)}
+.domrow__code{font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.04em}
+.domrow__name{font-size:12px; line-height:1.25; color:var(--ink-soft)}
+.domrow__bar{grid-column:2; margin-top:4px}
+.domrow__pct{font-family:var(--mono); font-size:11px; text-align:right; font-variant-numeric:tabular-nums}
+.domrow__gaps{grid-column:3; font-family:var(--mono); font-size:10px; color:var(--mark); text-align:right}
+.spine__foot{margin-top:16px; border-top:1px solid var(--rule); padding-top:12px}
+
+/* ---- section furniture -------------------------------------------------- */
+.sec{margin:0 0 30px}
+.sec__head{border-bottom:2px solid var(--ink); padding-bottom:7px; margin-bottom:14px}
+.sec__head h2{font-size:20px; font-weight:600; letter-spacing:-.01em; margin:3px 0 0}
+.sec__lede{margin:10px 0 18px; color:var(--ink-soft); font-size:14px; max-width:78ch}
+.panel{background:var(--bond); border:1px solid var(--rule); padding:16px 18px; margin-bottom:16px}
+.panel--sink{background:var(--bond-sink)}
+
+/* ---- domain header ----------------------------------------------------- */
+.domhead{background:var(--bond); border:1px solid var(--rule); border-left:5px solid var(--indigo); padding:15px 18px; margin-bottom:16px}
+.domhead h3{margin:2px 0 8px; font-size:19px; font-weight:600}
+.domhead p{margin:0 0 7px; font-size:14px; color:var(--ink-soft); max-width:80ch}
+.domhead p:last-child{margin-bottom:0}
+
+/* ---- fieldwork toolbar ------------------------------------------------- */
+.tools{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:16px}
+.search{
+  font-family:var(--mono); font-size:12px; padding:8px 10px; min-width:250px;
+  background:var(--bond); border:1px solid var(--rule);
+}
+.chip{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase;
+  background:var(--bond); border:1px solid var(--rule); padding:7px 11px; cursor:pointer;
+  color:var(--ink-soft);
+}
+.chip:hover{border-color:var(--ink-soft); color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink); border-color:var(--ink); color:var(--bond)}
+.chip .tally{opacity:.65; margin-left:6px}
+
+/* ---- control card ------------------------------------------------------ */
+.card{
+  display:grid; grid-template-columns:168px 1fr;
+  background:var(--bond); border:1px solid var(--rule); margin-bottom:14px;
+}
+.card--out{opacity:.62}
+.card--gap{border-left:4px solid var(--mark)}
+.card--ok{border-left:4px solid var(--verified)}
+.card--open{border-left:4px solid var(--rule)}
+
+/* The statutory rail. Every card carries its authority in the margin, the way
+   a printed Act carries section numbers — and where the Rules citation has not
+   been verified the rail shows a ruled blank instead of a number, so an
+   unverified citation looks unverified. */
+.rail{
+  background:var(--bond-sink); border-right:1px solid var(--rule);
+  padding:14px 13px; font-family:var(--mono); font-size:11px; line-height:1.45;
+}
+.rail__id{font-size:14px; font-weight:600; letter-spacing:.03em; color:var(--indigo)}
+.rail__grp{margin-top:12px}
+.rail__grp .lbl{font-size:9px; margin-bottom:2px}
+.rail__act{color:var(--ink); font-weight:600}
+.rail__slot{
+  display:block; border-bottom:1.5px dotted var(--mark); min-height:15px;
+  margin:2px 0 3px; color:var(--mark);
+}
+.rail__slot-note{color:var(--mark); font-size:9.5px; letter-spacing:.06em; text-transform:uppercase}
+.rail__ok{color:var(--verified)}
+.rail__pen{color:var(--ink-soft)}
+.sev{display:inline-block; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase}
+.sev--critical{color:var(--mark); font-weight:600}
+.sev--high{color:var(--amber); font-weight:600}
+.sev--medium{color:var(--ink-soft)}
+.sev--low{color:var(--ink-faint)}
+
+.body{padding:14px 18px 16px; min-width:0}
+.body h4{margin:0 0 8px; font-size:17px; font-weight:600; letter-spacing:-.005em; line-height:1.3}
+.oblig{margin:0 0 12px; max-width:78ch}
+.qt{border-left:2px solid var(--rule); padding:0 0 0 12px; margin:0 0 12px}
+.qt p{margin:2px 0 0; font-size:14px; max-width:76ch}
+.evlist{margin:0 0 12px; padding:0; list-style:none}
+.evlist li{font-size:13px; color:var(--ink-soft); padding-left:14px; position:relative; margin-bottom:2px}
+.evlist li::before{content:"·"; position:absolute; left:4px; color:var(--rule)}
+.note{background:var(--bond-sink); border:1px solid var(--rule-soft); padding:9px 12px; margin:0 0 12px; font-size:13px; color:var(--ink-soft)}
+
+/* ---- the anchored scale ------------------------------------------------ */
+/* 0, 2 and 4 are described in the library; 1 and 3 are not. The stops are
+   sized to say so — large squares where there is a definition, small ticks
+   where the auditor is interpolating. */
+.scale{margin:14px 0 0}
+.stops{position:relative; display:flex; align-items:center; gap:0; height:34px; max-width:430px}
+.stops::before{content:""; position:absolute; left:9px; right:9px; top:50%; height:1px; background:var(--rule)}
+.stop{
+  position:relative; flex:1 1 0; display:flex; align-items:center; justify-content:center;
+  background:none; border:0; padding:0; cursor:pointer; height:34px;
+}
+.stop__mk{
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bond); border:1.5px solid var(--rule);
+  font-family:var(--mono); font-size:12px; color:var(--ink-soft);
+}
+.stop--anchor .stop__mk{width:26px; height:26px}
+.stop--mid .stop__mk{width:17px; height:17px; font-size:10px; border-style:dashed}
+.stop:hover .stop__mk{border-color:var(--indigo); color:var(--indigo)}
+.stop[aria-checked="true"] .stop__mk{background:var(--indigo); border-color:var(--indigo); color:#fff; font-weight:600}
+.stop__cap{position:absolute; bottom:-1px; font-family:var(--mono); font-size:8.5px; color:var(--ink-faint)}
+
+.scalefoot{display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-top:6px}
+.na{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase;
+  background:var(--bond); border:1px dashed var(--rule); padding:6px 10px; cursor:pointer; color:var(--ink-soft);
+}
+.na:hover{border-color:var(--ink-soft)}
+.na[aria-pressed="true"]{background:var(--ink-soft); border-color:var(--ink-soft); border-style:solid; color:var(--bond)}
+
+.anchors{margin:12px 0 0; border-top:1px solid var(--rule-soft); padding-top:10px}
+.anchors dl{display:grid; grid-template-columns:22px 1fr; gap:3px 10px; margin:0}
+.anchors dt{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--indigo); text-align:center}
+.anchors dd{margin:0 0 4px; font-size:13px; color:var(--ink-soft); max-width:76ch}
+.anchors .between{margin:7px 0 0; font-family:var(--mono); font-size:10.5px; color:var(--ink-faint)}
+
+/* ---- capture fields ---------------------------------------------------- */
+.capture{margin-top:14px; border-top:1px solid var(--rule-soft); padding-top:12px}
+.fields{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px}
+.f{display:block}
+.f textarea,.f input{
+  width:100%; background:#fff; border:1px solid var(--rule); padding:7px 9px;
+  font-family:var(--serif); font-size:13.5px; margin-top:3px;
+}
+.f textarea{resize:vertical; min-height:62px; line-height:1.5}
+.f input{font-family:var(--mono); font-size:12px}
+.f--wide{grid-column:1/-1}
+.f--want input{border-color:var(--mark); background:#FFF9F9}
+.f--want .lbl{color:var(--mark)}
+
+/* ---- status strip ------------------------------------------------------ */
+.strip{
+  display:flex; flex-wrap:wrap; gap:6px 16px; align-items:baseline;
+  margin-top:12px; border-top:1px solid var(--rule-soft); padding-top:9px;
+  font-family:var(--mono); font-size:11px;
+}
+.strip__st{font-weight:600}
+.strip__st--gap{color:var(--mark)}
+.strip__st--ok{color:var(--verified)}
+.strip__st--open{color:var(--ink-faint)}
+.strip__k{color:var(--ink-faint)}
+
+/* ---- tables ------------------------------------------------------------ */
+.tw{overflow-x:auto; background:var(--bond); border:1px solid var(--rule)}
+table.t{border-collapse:collapse; width:100%; font-size:13px}
+table.t th{
+  font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  text-align:left; padding:9px 10px; background:var(--ink); color:var(--bond);
+  font-weight:400; white-space:nowrap; vertical-align:bottom;
+}
+table.t td{padding:8px 10px; border-top:1px solid var(--rule-soft); vertical-align:top}
+table.t tbody tr:hover{background:var(--bond-sink)}
+table.t .c{text-align:center}
+table.t .n{font-family:var(--mono); font-variant-numeric:tabular-nums; white-space:nowrap}
+table.t .id{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--indigo); white-space:nowrap}
+.pri{font-family:var(--mono); font-size:11px; font-weight:600}
+.pri--P1{color:var(--mark)}
+.pri--P2{color:var(--amber)}
+.pri--P3,.pri--P4{color:var(--ink-soft)}
+
+/* ---- the risk grid ----------------------------------------------------- */
+/* The grid is the formula: severity rank down, score across, and the cell is
+   their product. Nothing is inferred that the arithmetic does not give. */
+.grid{border-collapse:collapse; font-family:var(--mono); font-size:12px}
+.grid th{font-size:9.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-faint); font-weight:400; padding:5px 8px}
+.grid th.rowh{text-align:right; white-space:nowrap}
+.grid td{padding:0}
+.cell{
+  width:74px; height:52px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:1px solid var(--bond); background:var(--r0); cursor:pointer; gap:1px;
+}
+.cell__n{font-size:16px; font-weight:600; font-variant-numeric:tabular-nums}
+.cell__r{font-size:9px; letter-spacing:.05em; opacity:.72}
+.cell--0{background:var(--r0)} .cell--1{background:var(--r1)}
+.cell--2{background:var(--r2)} .cell--3{background:var(--r3); color:#fff}
+.cell--4{background:var(--r4); color:#fff}
+.cell--empty{color:var(--ink-faint); cursor:default}
+.cell--empty .cell__n{font-weight:400}
+.gridkey{font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); margin-top:8px}
+
+/* ---- figure strip ------------------------------------------------------ */
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(158px,1fr)); gap:1px; background:var(--rule); border:1px solid var(--rule); margin-bottom:18px}
+.fig{background:var(--bond); padding:13px 15px}
+.fig__v{font-family:var(--mono); font-size:23px; font-weight:600; line-height:1.1; font-variant-numeric:tabular-nums}
+.fig__v--mark{color:var(--mark)}
+.fig__v--indigo{color:var(--indigo)}
+.fig__s{font-family:var(--mono); font-size:10px; color:var(--ink-faint); margin-top:3px}
+
+/* ---- citations --------------------------------------------------------- */
+.slot{border-bottom:1.5px dotted var(--mark); color:var(--mark); display:inline-block; min-width:150px}
+.stat{font-family:var(--mono); font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; white-space:nowrap}
+.stat--ok{color:var(--verified)}
+.stat--no{color:var(--mark)}
+.cids{font-family:var(--mono); font-size:11px; color:var(--ink-soft); line-height:1.5}
+
+/* ---- scope view -------------------------------------------------------- */
+.flag{display:grid; grid-template-columns:1fr 84px; gap:10px 16px; align-items:start; border-top:1px solid var(--rule-soft); padding:12px 0}
+.flag:first-of-type{border-top:0}
+.flag__name{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--indigo)}
+.flag__desc{font-size:13px; color:var(--ink-soft); margin:3px 0 0; max-width:76ch}
+.flag__gates{font-family:var(--mono); font-size:10px; color:var(--ink-faint); margin-top:4px}
+.tog{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.07em; text-transform:uppercase;
+  width:100%; padding:7px 0; cursor:pointer; border:1px solid var(--rule); background:var(--bond); color:var(--ink-soft);
+}
+.tog[aria-pressed="true"]{background:var(--indigo); border-color:var(--indigo); color:#fff}
+.tog:hover{border-color:var(--indigo)}
+
+.empty{background:var(--bond); border:1px dashed var(--rule); padding:24px; text-align:center; color:var(--ink-soft)}
+.empty p{margin:0 0 6px}
+.empty p:last-child{margin:0; font-family:var(--mono); font-size:11px; color:var(--ink-faint)}
+
+.caveat{font-size:13px; color:var(--ink-soft); max-width:82ch; margin:10px 0 0}
+.fold{background:none; border:0; padding:0; font-family:var(--mono); font-size:10.5px; color:var(--indigo); cursor:pointer; text-decoration:underline}
+
+@media (max-width:900px){
+  .frame{flex-direction:column}
+  .spine{position:static; width:auto; flex:1 1 auto; max-height:none; border-right:0; border-bottom:1px solid var(--rule)}
+  .card{grid-template-columns:1fr}
+  .rail{border-right:0; border-bottom:1px solid var(--rule); display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px}
+  .rail__grp{margin-top:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div>
+    <span class="lbl">Digital Personal Data Protection Act, 2023 &middot; compliance audit</span>
+    <h1 id="mastEntity">&nbsp;</h1>
+    <p class="mast-meta" id="mastMeta">&nbsp;</p>
+  </div>
+  <div class="mast-actions">
+    <span class="savestate" id="saveState"></span>
+    <button class="btn" id="btnOpen">Open assessment file</button>
+    <button class="btn btn--go" id="btnSave">Save assessment file</button>
+    <button class="btn" id="btnNew">Start a new assessment</button>
+    <input type="file" id="fileIn" accept=".json,application/json" hidden>
+  </div>
+</header>
+
+<nav class="views" role="tablist" aria-label="Views">
+  <button class="tab" role="tab" data-view="scope"   aria-selected="false">Scope</button>
+  <button class="tab" role="tab" data-view="field"   aria-selected="false">Fieldwork <span class="tally" id="tallyField"></span></button>
+  <button class="tab" role="tab" data-view="find"    aria-selected="false">Findings <span class="tally" id="tallyFind"></span></button>
+  <button class="tab" role="tab" data-view="cite"    aria-selected="false">Citations <span class="tally" id="tallyCite"></span></button>
+</nav>
+
+<div class="frame">
+  <aside class="spine" id="spine" aria-label="Maturity by domain"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+"use strict";
+
+/* ======================================================================== */
+/* DATA — generated from controls/*.yaml by webapp/build_webapp.py.          */
+/* Editing the YAML and rebuilding is the only way to change the library, so */
+/* the app, the CLI, the workbook and the report cannot drift apart.         */
+/* ======================================================================== */
+// <<<DATA
+const DATA = /*__DATA__*/null;
+const SAMPLE = /*__SAMPLE__*/null;
+// DATA>>>
+
+/* ======================================================================== */
+/* ENGINE — a line-for-line port of dpdpa_audit/scoring.py. Extracted and    */
+/* checked against the Python engine on the sample engagement at build time. */
+/* ======================================================================== */
+// <<<ENGINE
+const SEV_RANK = DATA.severity_rank;
+const NA = "NA";
+
+/* Python's round() breaks halves to even. The difference from JavaScript's
+   round shows up about once in a hundred domain figures, which is enough to
+   make the app and the report disagree in the first decimal place. */
+function round1(x){
+  if (x === null || x === undefined) return null;
+  const s = x * 10, f = Math.floor(s);
+  if (Math.abs(s - f - 0.5) < 1e-9) return ((f % 2 === 0) ? f : f + 1) / 10;
+  return Math.round(s) / 10;
+}
+function roundN(x, n){
+  const p = Math.pow(10, n);
+  return Math.round(x * p) / p;
+}
+
+function numericScore(v){
+  if (v === null || v === undefined || v === "") return null;
+  if (typeof v === "string"){
+    if (v.trim().toUpperCase() === NA) return null;
+    const n = parseInt(v, 10);
+    return Number.isNaN(n) ? null : n;
+  }
+  return Math.trunc(v);
+}
+function isNA(v){ return typeof v === "string" && v.trim().toUpperCase() === NA; }
+
+function flagValue(flags, name){
+  if (flags && Object.prototype.hasOwnProperty.call(flags, name)) return !!flags[name];
+  const d = DATA.profile_flags.find(f => f.name === name);
+  return d ? !!d.default : false;
+}
+function appliesTo(ctrl, flags){
+  const a = ctrl.applicability || {};
+  for (const f of a.requires || []) if (!flagValue(flags, f)) return false;
+  for (const f of a.excluded_if || []) if (flagValue(flags, f)) return false;
+  return true;
+}
+function scopeReason(ctrl, flags){
+  const a = ctrl.applicability || {};
+  const unmet = (a.requires || []).filter(f => !flagValue(flags, f));
+  const hit = (a.excluded_if || []).filter(f => flagValue(flags, f));
+  const parts = [];
+  if (unmet.length) parts.push("requires " + unmet.join(", "));
+  if (hit.length) parts.push("excluded by " + hit.join(", "));
+  return parts.length ? parts.join("; ") : "in scope";
+}
+
+function ruleSlot(key){ return key ? (DATA.citations.rule_slots[key] || null) : null; }
+function ruleCitationText(ctrl){
+  const s = ruleSlot(ctrl.rule_slot);
+  if (!s) return "—";
+  if (s.citation) return String(s.citation);
+  return "[Rules citation to be verified]";
+}
+function ruleStatus(ctrl){ const s = ruleSlot(ctrl.rule_slot); return s ? s.status : null; }
+function penaltyFor(ctrl){
+  if (ctrl.penalty_entry === null || ctrl.penalty_entry === undefined) return null;
+  return DATA.citations.penalty_schedule.entries.find(e => e.entry === ctrl.penalty_entry) || null;
+}
+
+function maturityBand(pct){
+  if (pct === null || pct === undefined) return ["Not assessed", "No applicable controls were assessed."];
+  for (const b of DATA.maturity_bands) if (pct >= b[0] && pct < b[1]) return [b[2], b[3]];
+  const l = DATA.maturity_bands[DATA.maturity_bands.length - 1];
+  return ["Optimised", l[3]];
+}
+function riskBandOf(risk){
+  if (risk === null || risk === undefined) return "Not assessed";
+  for (const b of DATA.risk_bands) if (risk >= b[0] && risk < b[1]) return b[2];
+  return "Critical";
+}
+function priorityFor(risk){
+  for (const r of DATA.priority_rules) if (risk >= r[1]) return {code:r[0], days:r[2], desc:r[3]};
+  const l = DATA.priority_rules[DATA.priority_rules.length - 1];
+  return {code:l[0], days:l[2], desc:l[3]};
+}
+function statusLabel(r){
+  if (!r.in_scope) return "Out of scope";
+  if (r.not_applicable) return "Not applicable";
+  if (r.score === null) return "Not assessed";
+  if (r.score >= 4) return "Compliant";
+  if (r.score >= DATA.substantially_compliant) return "Substantially compliant";
+  if (r.score >= 2) return "Partially compliant";
+  return "Non-compliant";
+}
+
+function scoreAssessment(a){
+  const flags = a.profile.flags || {};
+  const domains = DATA.domains.map(dom => {
+    const results = DATA.controls.filter(c => c.domain === dom.code).map(ctrl => {
+      const in_scope = appliesTo(ctrl, flags);
+      const resp = a.responses[ctrl.id];
+      let score = (resp && in_scope) ? numericScore(resp.score) : null;
+      if (score !== null) score = Math.max(0, Math.min(4, score));
+      const r = {
+        control: ctrl, in_scope: in_scope, scope_reason: scopeReason(ctrl, flags),
+        score: score,
+        not_applicable: !!(resp && isNA(resp.score)),
+        finding: resp ? (resp.finding || "") : "",
+        evidence: resp ? (resp.evidence || []).slice() : [],
+        evidence_ref: resp ? (resp.evidence_ref || "") : "",
+        owner: resp ? (resp.owner || "") : "",
+        target_date: resp ? (resp.target_date || "") : "",
+        auditor_note: resp ? (resp.auditor_note || "") : "",
+        act_ref: ctrl.act_ref,
+        rule_citation: ruleCitationText(ctrl),
+        rule_status: ruleStatus(ctrl),
+        penalty: penaltyFor(ctrl),
+      };
+      r.assessed = r.score !== null;
+      r.risk = r.score === null ? null : SEV_RANK[ctrl.severity] * (4 - r.score);
+      r.risk_band = riskBandOf(r.risk);
+      r.maturity_pct = r.score === null ? null : round1(r.score / 4 * 100);
+      r.is_gap = r.score !== null && r.score < DATA.substantially_compliant;
+      r.status_label = statusLabel(r);
+      return r;
+    });
+    const d = Object.assign({}, dom, {results: results});
+    d.scored = results.filter(r => r.assessed);
+    d.in_scope_results = results.filter(r => r.in_scope && !r.not_applicable);
+    d.gaps = results.filter(r => r.is_gap);
+    d.unassessed = results.filter(r => r.in_scope && !r.not_applicable && !r.assessed);
+    if (d.scored.length){
+      const num = d.scored.reduce((t, r) => t + r.score * r.control.weight, 0);
+      const den = d.scored.reduce((t, r) => t + 4 * r.control.weight, 0);
+      d.maturity_pct = den ? round1(num / den * 100) : null;
+    } else {
+      d.maturity_pct = null;
+    }
+    d.band = maturityBand(d.maturity_pct)[0];
+    d.max_risk = d.scored.length ? Math.max(...d.scored.map(r => r.risk || 0)) : 0;
+    d.critical_gap_count = d.gaps.filter(r => r.control.severity === "critical").length;
+    return d;
+  });
+
+  const res = {domains: domains};
+  res.all = domains.flatMap(d => d.results);
+  res.byId = {};
+  for (const r of res.all) res.byId[r.control.id] = r;
+
+  const contributing = domains.filter(d => d.maturity_pct !== null);
+  if (contributing.length){
+    const num = contributing.reduce((t, d) => t + d.maturity_pct * d.weight, 0);
+    const den = contributing.reduce((t, d) => t + d.weight, 0);
+    res.overall_maturity_pct = den ? round1(num / den) : null;
+  } else {
+    res.overall_maturity_pct = null;
+  }
+  res.overall_band = maturityBand(res.overall_maturity_pct);
+  res.in_scope_count = domains.reduce((t, d) => t + d.in_scope_results.length, 0);
+  res.out_of_scope_count = res.all.filter(r => !r.in_scope).length;
+  res.na_count = res.all.filter(r => r.not_applicable).length;
+  res.scored = res.all.filter(r => r.assessed);
+  res.assessed_count = res.scored.length;
+  res.unassessed = domains.flatMap(d => d.unassessed);
+  res.coverage_pct = res.in_scope_count ? round1(res.assessed_count / res.in_scope_count * 100) : 0.0;
+  res.gaps = res.all.filter(r => r.is_gap);
+
+  res.gap_counts_by_severity = {critical:0, high:0, medium:0, low:0};
+  for (const r of res.gaps) res.gap_counts_by_severity[r.control.severity] += 1;
+  res.status_counts = {};
+  for (const r of res.all) res.status_counts[r.status_label] = (res.status_counts[r.status_label] || 0) + 1;
+
+  res.penalty_exposure = penaltyExposure(res);
+  return res;
+}
+
+function penaltyExposure(res){
+  const engaged = new Map();
+  for (const r of res.gaps){
+    if (!r.penalty) continue;
+    const e = r.penalty.entry;
+    if (!engaged.has(e)) engaged.set(e, {
+      entry:e, breach:r.penalty.breach, provision:r.penalty.provision,
+      label:r.penalty.label, max_inr_crore:r.penalty.max_penalty_inr_crore,
+      controls:[],
+    });
+    engaged.get(e).controls.push(r.control.id);
+  }
+  const entries = [...engaged.values()].sort((a, b) => (b.max_inr_crore || 0) - (a.max_inr_crore || 0));
+  const total = entries.reduce((t, e) => t + (e.max_inr_crore || 0), 0);
+  return {
+    entries: entries,
+    aggregate_max_inr_crore: roundN(total, 3),
+    basis: DATA.penalty_basis,
+    caveat: DATA.penalty_caveat,
+  };
+}
+
+function addDays(iso, days){
+  const d = new Date(iso + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+function buildGapRegister(res, assessmentDate){
+  const ordered = res.gaps.slice().sort((a, b) =>
+    (b.risk || 0) - (a.risk || 0) ||
+    SEV_RANK[b.control.severity] - SEV_RANK[a.control.severity] ||
+    (a.control.id < b.control.id ? -1 : a.control.id > b.control.id ? 1 : 0));
+  return ordered.map((r, i) => {
+    const risk = r.risk || 0;
+    const p = priorityFor(risk);
+    const dom = res.domains.find(d => d.code === r.control.domain);
+    return {
+      ref: "G" + String(i + 1).padStart(3, "0"),
+      control_id: r.control.id,
+      domain_code: r.control.domain,
+      domain_name: dom ? dom.name : r.control.domain,
+      title: r.control.title,
+      severity: cap(r.control.severity),
+      score: r.score === null ? 0 : r.score,
+      risk: risk,
+      risk_band: r.risk_band,
+      priority: p.code,
+      due_date: r.target_date || addDays(assessmentDate, p.days),
+      act_ref: r.act_ref,
+      rule_citation: r.rule_citation,
+      penalty_label: r.penalty ? r.penalty.label : "—",
+      finding: r.finding || "(no finding recorded)",
+      target_state: r.control.scoring["4"] || "",
+      owner: r.owner || "(unassigned)",
+      evidence_ref: r.evidence_ref || "—",
+    };
+  });
+}
+function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+// ENGINE>>>
+
+/* ======================================================================== */
+/* STATE                                                                    */
+/* ======================================================================== */
+const STORE_KEY = "dpdpa-audit-workbench/v1";
+const RESP_FIELDS = ["control_id","score","finding","evidence","evidence_ref","owner","target_date","auditor_note"];
+
+DATA.byId = {};
+for (const c of DATA.controls) DATA.byId[c.id] = c;
+
+let state = null;     // the assessment, in the shape dpdpa_audit reads
+let results = null;   // derived, recomputed on every change
+let view = "field";
+let domainFilter = "ALL";
+let statusFilter = "all";
+let searchTerm = "";
+let cellFilter = null;  // {ids:Set, label:string} from a click in the risk grid
+let saveTimer = null;
+
+function blankProfile(){
+  const flags = {};
+  for (const f of DATA.profile_flags) flags[f.name] = !!f.default;
+  return {
+    legal_name:"", trading_name:"", sector:"", registered_office:"",
+    headcount:null, data_principal_count:null, business_description:"",
+    systems_in_scope:[], entities_in_scope:[], exclusions:[], flags:flags,
+  };
+}
+function blankAssessment(){
+  const a = {
+    profile: blankProfile(), responses: {},
+    assessment_date: new Date().toISOString().slice(0, 10),
+    auditor_name:"", auditor_firm:"", engagement_ref:"",
+    report_title:"DPDPA Compliance Audit Report",
+    scope_statement:"",
+    limitations: DATA.default_limitations.slice(),
+    scoping_assumptions: DATA.default_scoping_assumptions.slice(),
+    library_version: DATA.library_version,
+  };
+  for (const c of DATA.controls) if (appliesTo(c, a.profile.flags)) response(a, c.id);
+  return a;
+}
+function response(a, cid){
+  if (!a.responses[cid]) a.responses[cid] = {
+    control_id:cid, score:null, finding:"", evidence:[], evidence_ref:"",
+    owner:"", target_date:"", auditor_note:"",
+  };
+  return a.responses[cid];
+}
+function normalise(raw){
+  const a = blankAssessment();
+  a.responses = {};
+  for (const k of Object.keys(a)) if (k in raw && k !== "profile" && k !== "responses") a[k] = raw[k];
+  const p = blankProfile();
+  for (const k of Object.keys(p)) if (k in (raw.profile || {})) p[k] = raw.profile[k];
+  p.flags = Object.assign({}, p.flags, (raw.profile || {}).flags || {});
+  a.profile = p;
+  for (const [cid, r] of Object.entries(raw.responses || {})){
+    if (!DATA.byId[cid]) continue;   // a control that is no longer in the library
+    const t = response(a, cid);
+    for (const f of RESP_FIELDS) if (f in r) t[f] = r[f];
+    t.control_id = cid;
+  }
+  return a;
+}
+function exportPayload(){
+  const out = {
+    profile: state.profile,
+    responses: {},
+    assessment_date: state.assessment_date,
+    auditor_name: state.auditor_name,
+    auditor_firm: state.auditor_firm,
+    engagement_ref: state.engagement_ref,
+    report_title: state.report_title,
+    scope_statement: state.scope_statement,
+    limitations: state.limitations,
+    scoping_assumptions: state.scoping_assumptions,
+    library_version: state.library_version,
+    _schema: "dpdpa-audit-assessment/1",
+  };
+  for (const [cid, r] of Object.entries(state.responses)){
+    const o = {};
+    for (const f of RESP_FIELDS) o[f] = r[f];
+    out.responses[cid] = o;
+  }
+  return out;
+}
+
+function recompute(){ results = scoreAssessment(state); }
+
+/* Autosave is a convenience, not the record. The assessment file is the
+   record, which is why Save is a button and not a background process. */
+function touch(){
+  recompute();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try{
+      localStorage.setItem(STORE_KEY, JSON.stringify(exportPayload()));
+      setSaveState("kept in this browser");
+    }catch(e){
+      setSaveState("browser storage unavailable — use Save");
+    }
+  }, 400);
+}
+function setSaveState(msg){ document.getElementById("saveState").textContent = msg; }
+
+/* ======================================================================== */
+/* RENDER                                                                   */
+/* ======================================================================== */
+const $ = id => document.getElementById(id);
+function esc(s){
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+function pct(v){ return v === null || v === undefined ? "—" : v.toFixed(1) + "%"; }
+function el(html){ const t = document.createElement("template"); t.innerHTML = html.trim(); return t.content.firstElementChild; }
+
+function renderAll(){
+  renderMast();
+  renderSpine();
+  renderTallies();
+  renderView();
+}
+function renderMast(){
+  const p = state.profile;
+  $("mastEntity").textContent = p.legal_name || p.trading_name || "Unnamed engagement";
+  const bits = [];
+  if (state.engagement_ref) bits.push(state.engagement_ref);
+  if (state.auditor_firm) bits.push(state.auditor_firm);
+  if (state.assessment_date) bits.push("assessed " + state.assessment_date);
+  bits.push("control library v" + DATA.library_version);
+  $("mastMeta").textContent = bits.join("  ·  ");
+}
+function renderTallies(){
+  $("tallyField").textContent = results.assessed_count + "/" + results.in_scope_count;
+  $("tallyFind").textContent = results.gaps.length;
+  $("tallyCite").textContent = DATA.unverified_keys.length;
+}
+
+function barHTML(p, tall){
+  const w = p === null || p === undefined ? 0 : Math.max(0, Math.min(100, p));
+  return '<div class="bar' + (tall ? " bar--tall" : "") + '">' +
+         '<div class="bar__fill" style="width:' + w + '%"></div><div class="bar__ticks"></div></div>';
+}
+function renderSpine(){
+  const r = results, b = r.overall_band;
+  const fig = r.overall_maturity_pct === null ? "—" : r.overall_maturity_pct.toFixed(1);
+  let h = '<div class="overall">' +
+    '<span class="lbl">Weighted maturity</span>' +
+    '<div class="overall__figure">' + fig + '<sup>%</sup></div>' +
+    '<div class="overall__band">' + esc(b[0]) + '</div>' +
+    barHTML(r.overall_maturity_pct, true) +
+    '<p class="overall__note">' + r.assessed_count + " of " + r.in_scope_count +
+      " in-scope controls assessed · coverage " + pct(r.coverage_pct) + "<br>" +
+      r.gaps.length + " gaps · " + r.gap_counts_by_severity.critical + " critical" +
+      (r.out_of_scope_count ? "<br>" + r.out_of_scope_count + " controls out of scope" : "") +
+    "</p></div>";
+
+  h += '<span class="lbl" style="margin-bottom:6px">Domains · weighted</span>';
+  h += '<button class="spine__all domrow__code" data-dom="ALL" aria-current="' +
+       (domainFilter === "ALL") + '">ALL &nbsp;<span style="font-family:var(--serif);font-size:12px;color:var(--ink-soft)">every domain</span></button>';
+  for (const d of r.domains){
+    h += '<button class="domrow" data-dom="' + d.code + '" aria-current="' + (domainFilter === d.code) + '" ' +
+         'title="' + esc(d.name + " · weight " + d.weight + " · " + d.band) + '">' +
+         '<span class="domrow__code">' + d.code + '</span>' +
+         '<span class="domrow__name">' + esc(d.name) + '</span>' +
+         '<span class="domrow__pct">' + (d.maturity_pct === null ? "—" : d.maturity_pct.toFixed(0) + "%") + '</span>' +
+         '<span class="domrow__bar">' + barHTML(d.maturity_pct) + '</span>' +
+         '<span class="domrow__gaps">' + (d.gaps.length ? d.gaps.length + " gap" + (d.gaps.length === 1 ? "" : "s") : "") + '</span>' +
+         '</button>';
+  }
+  h += '<div class="spine__foot"><span class="lbl">Exposure ceiling</span>' +
+       '<div class="num" style="font-size:17px;font-weight:600;color:var(--mark)">INR ' +
+       r.penalty_exposure.aggregate_max_inr_crore + ' crore</div>' +
+       '<p class="hint" style="margin:5px 0 0">Aggregate of the Schedule maxima engaged. A ceiling, not a prediction — see Findings.</p></div>';
+  $("spine").innerHTML = h;
+  $("spine").querySelectorAll("[data-dom]").forEach(btn => {
+    btn.onclick = () => { domainFilter = btn.dataset.dom; cellFilter = null; setView("field"); };
+  });
+}
+
+/* ---- fieldwork ---------------------------------------------------------- */
+const STATUS_FILTERS = [
+  ["all",        "All",             r => true],
+  ["open",       "Not assessed",    r => r.in_scope && !r.not_applicable && !r.assessed],
+  ["gap",        "Gaps",            r => r.is_gap],
+  ["critical",   "Critical gaps",   r => r.is_gap && r.control.severity === "critical"],
+  ["done",       "At or above 3",   r => r.assessed && r.score >= DATA.substantially_compliant],
+  ["na",         "Not applicable",  r => r.not_applicable],
+  ["out",        "Out of scope",    r => !r.in_scope],
+];
+
+function visibleResults(){
+  const f = STATUS_FILTERS.find(x => x[0] === statusFilter)[2];
+  const q = searchTerm.trim().toLowerCase();
+  return results.all.filter(r => {
+    if (domainFilter !== "ALL" && r.control.domain !== domainFilter) return false;
+    if (cellFilter && !cellFilter.ids.has(r.control.id)) return false;
+    if (!f(r)) return false;
+    if (q){
+      const hay = (r.control.id + " " + r.control.title + " " + r.control.obligation + " " +
+                   r.control.act_ref + " " + r.finding).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function railHTML(r){
+  const c = r.control;
+  let h = '<div class="rail__id">' + c.id + '</div>' +
+    '<div class="rail__grp"><span class="lbl">Severity</span>' +
+      '<span class="sev sev--' + c.severity + '">' + c.severity + '</span>' +
+      ' <span style="color:var(--ink-faint)">· wt ' + c.weight + '</span></div>' +
+    '<div class="rail__grp"><span class="lbl">DPDP Act, 2023</span>' +
+      '<span class="rail__act">' + esc(c.act_ref) + '</span></div>';
+  if (c.rule_slot){
+    const s = DATA.citations.rule_slots[c.rule_slot];
+    h += '<div class="rail__grp"><span class="lbl">DPDP Rules</span>';
+    if (s && s.citation){
+      h += '<span class="rail__ok">' + esc(s.citation) + '</span>';
+    } else {
+      h += '<span class="rail__slot" title="' + esc(s ? s.subject : "") +
+           ' — the slot is deliberately blank until the notified Rules are checked.">&nbsp;</span>' +
+           '<span class="rail__slot-note">to be verified</span>';
+    }
+    h += '<div class="hint" style="margin-top:3px">' + esc(s ? s.subject : "") + '</div></div>';
+  }
+  if (r.penalty){
+    h += '<div class="rail__grp"><span class="lbl">Schedule entry ' + r.penalty.entry + '</span>' +
+         '<span class="rail__pen">' + esc(r.penalty.label) + '</span></div>';
+  }
+  if (!r.in_scope){
+    h += '<div class="rail__grp"><span class="lbl">Out of scope</span>' +
+         '<span class="hint">' + esc(r.scope_reason) + '</span></div>';
+  }
+  return h;
+}
+
+function stripHTML(r){
+  const st = r.status_label;
+  const kind = r.is_gap ? "gap" : (r.assessed && r.score >= DATA.substantially_compliant) ? "ok" : "open";
+  let h = '<span class="strip__st strip__st--' + kind + '">' + esc(st) + '</span>';
+  if (r.assessed){
+    const p = priorityFor(r.risk);
+    h += '<span><span class="strip__k">score</span> ' + r.score + ' of 4</span>' +
+         '<span><span class="strip__k">residual risk</span> ' + r.risk + ' of 16 · ' + r.risk_band + '</span>';
+    if (r.is_gap){
+      h += '<span><span class="strip__k">priority</span> ' + p.code +
+           ' · due ' + esc(r.target_date || addDays(state.assessment_date, p.days)) +
+           (r.target_date ? " (agreed)" : " (derived)") + '</span>';
+      if (!r.owner) h += '<span style="color:var(--mark)">no remediation owner recorded</span>';
+    }
+  } else if (r.not_applicable){
+    h += '<span class="strip__k">removed from the denominator, not scored zero</span>';
+  }
+  return h;
+}
+
+function cardHTML(r){
+  const c = r.control;
+  const kind = !r.in_scope ? "out" : r.is_gap ? "gap" :
+               (r.assessed && r.score >= DATA.substantially_compliant) ? "ok" : "open";
+  let h = '<article class="card card--' + kind + '" id="card-' + c.id + '">' +
+    '<div class="rail">' + railHTML(r) + '</div><div class="body">' +
+    '<h4>' + esc(c.title) + '</h4>' +
+    '<p class="oblig">' + esc(c.obligation) + '</p>' +
+    '<div class="qt"><span class="lbl">Audit question</span><p>' + esc(c.audit_question) + '</p></div>' +
+    '<div class="qt"><span class="lbl">Test procedure</span><p>' + esc(c.test_procedure) + '</p></div>';
+  if (c.evidence_expected && c.evidence_expected.length){
+    h += '<span class="lbl" style="margin-bottom:4px">Evidence expected</span><ul class="evlist">' +
+         c.evidence_expected.map(e => '<li>' + esc(e) + '</li>').join("") + '</ul>';
+  }
+  if (c.note) h += '<p class="note"><span class="lbl">Note</span>' + esc(c.note) + '</p>';
+  if (c.citation_caution) h += '<p class="note" style="border-color:var(--mark)"><span class="lbl" style="color:var(--mark)">Citation caution</span>' + esc(c.citation_caution) + '</p>';
+
+  if (r.in_scope){
+    h += '<div class="scale"><span class="lbl">Maturity score</span><div class="stops" role="radiogroup" aria-label="Maturity score for ' + c.id + '">';
+    for (let s = 0; s <= 4; s++){
+      const anchor = (s === 0 || s === 2 || s === 4);
+      h += '<button class="stop ' + (anchor ? "stop--anchor" : "stop--mid") + '" role="radio" data-score="' + s + '" ' +
+           'aria-checked="' + (r.score === s && !r.not_applicable) + '" ' +
+           'title="' + (anchor ? esc(c.scoring[String(s)]) : "Intermediate — between the " + (s - 1) + " and " + (s + 1) + " anchors") +
+           '. Click the selected stop again to clear it."><span class="stop__mk">' + s + '</span>' +
+           (anchor ? '<span class="stop__cap">anchored</span>' : "") + '</button>';
+    }
+    h += '</div><div class="scalefoot">' +
+         '<button class="na" data-na="1" aria-pressed="' + r.not_applicable + '">Not applicable</button>' +
+         '<span class="hint">Marking a control not applicable removes it from the denominator. It is not a zero.</span></div>';
+    h += '<div class="anchors"><dl>' +
+         ['0','2','4'].map(k => '<dt>' + k + '</dt><dd>' + esc(c.scoring[k] || "") + '</dd>').join("") +
+         '</dl><p class="between">1 and 3 are the intermediate positions between these anchors.</p></div></div>';
+
+    const wantOwner = r.is_gap && !r.owner;
+    h += '<div class="capture"><div class="fields">' +
+      '<label class="f f--wide"><span class="lbl">Finding as recorded</span>' +
+        '<textarea data-f="finding" rows="3" placeholder="What the test showed, in the words that will appear in the report.">' + esc(r.finding) + '</textarea></label>' +
+      '<label class="f"><span class="lbl">Evidence reference</span>' +
+        '<input data-f="evidence_ref" value="' + esc(r.evidence_ref) + '" placeholder="WP-000"></label>' +
+      '<label class="f' + (wantOwner ? " f--want" : "") + '"><span class="lbl">Remediation owner' + (wantOwner ? " — needed" : "") + '</span>' +
+        '<input data-f="owner" value="' + esc(r.owner) + '" placeholder="Role or name"></label>' +
+      '<label class="f"><span class="lbl">Agreed target date</span>' +
+        '<input data-f="target_date" type="date" value="' + esc(r.target_date) + '"></label>' +
+      '<label class="f f--wide"><span class="lbl">Evidence examined — one per line</span>' +
+        '<textarea data-f="evidence" rows="2">' + esc((r.evidence || []).join("\n")) + '</textarea></label>' +
+      '<label class="f f--wide"><span class="lbl">Auditor note — not reported</span>' +
+        '<textarea data-f="auditor_note" rows="2">' + esc(r.auditor_note) + '</textarea></label>' +
+      '</div></div>';
+  }
+  h += '<div class="strip" id="strip-' + c.id + '">' + stripHTML(r) + '</div>';
+  h += '</div></article>';
+  return h;
+}
+
+function wireCard(node, cid){
+  node.querySelectorAll(".stop").forEach(btn => {
+    btn.onclick = () => {
+      const s = parseInt(btn.dataset.score, 10);
+      const cur = response(state, cid);
+      cur.score = (cur.score === s) ? null : s;
+      afterScore(node, cid);
+    };
+  });
+  const naBtn = node.querySelector("[data-na]");
+  if (naBtn) naBtn.onclick = () => {
+    const cur = response(state, cid);
+    cur.score = isNA(cur.score) ? null : NA;
+    afterScore(node, cid);
+  };
+  node.querySelectorAll("[data-f]").forEach(inp => {
+    inp.oninput = () => {
+      const cur = response(state, cid);
+      const f = inp.dataset.f;
+      cur[f] = (f === "evidence") ? inp.value.split("\n").map(s => s.trim()).filter(Boolean) : inp.value;
+      touch();
+      refreshStrip(cid);
+      renderSpine();
+      renderTallies();
+    };
+  });
+  const stops = [...node.querySelectorAll(".stop")];
+  stops.forEach((btn, i) => {
+    btn.onkeydown = ev => {
+      const d = ev.key === "ArrowRight" ? 1 : ev.key === "ArrowLeft" ? -1 : 0;
+      if (!d) return;
+      ev.preventDefault();
+      stops[(i + d + stops.length) % stops.length].focus();
+    };
+  });
+}
+function afterScore(node, cid){
+  touch();
+  const r = results.byId[cid];
+  node.querySelectorAll(".stop").forEach(b => {
+    b.setAttribute("aria-checked", String(!r.not_applicable && r.score === parseInt(b.dataset.score, 10)));
+  });
+  const naBtn = node.querySelector("[data-na]");
+  if (naBtn) naBtn.setAttribute("aria-pressed", String(r.not_applicable));
+  node.className = "card card--" + (!r.in_scope ? "out" : r.is_gap ? "gap" :
+      (r.assessed && r.score >= DATA.substantially_compliant) ? "ok" : "open");
+  const ownerField = node.querySelector('[data-f="owner"]');
+  if (ownerField) ownerField.parentElement.classList.toggle("f--want", r.is_gap && !r.owner);
+  refreshStrip(cid);
+  renderSpine();
+  renderTallies();
+}
+function refreshStrip(cid){
+  const s = $("strip-" + cid);
+  if (s) s.innerHTML = stripHTML(results.byId[cid]);
+}
+
+function renderFieldwork(){
+  const dom = domainFilter === "ALL" ? null : results.domains.find(d => d.code === domainFilter);
+  let h = '<section class="sec"><div class="sec__head"><span class="lbl">Fieldwork</span>' +
+    '<h2>' + (dom ? esc(dom.code + " — " + dom.name) : "All 17 domains") + '</h2></div>';
+
+  if (dom){
+    h += '<div class="domhead"><span class="lbl">Domain weight ' + dom.weight +
+      ' · ' + dom.in_scope_results.length + ' of ' + dom.results.length + ' controls in scope · ' +
+      pct(dom.maturity_pct) + ' · ' + esc(dom.band) + '</span>' +
+      '<h3>' + esc(dom.name) + '</h3>' +
+      '<p><strong>Scope question.</strong> ' + esc(dom.scope_question) + '</p>' +
+      '<p><strong>Why it matters.</strong> ' + esc(dom.why_it_matters) + '</p></div>';
+  }
+
+  h += '<div class="tools"><input class="search" id="q" type="search" placeholder="Search control, obligation, section, finding" value="' + esc(searchTerm) + '">';
+  for (const [key, label] of STATUS_FILTERS){
+    const n = results.all.filter(r =>
+      (domainFilter === "ALL" || r.control.domain === domainFilter) &&
+      STATUS_FILTERS.find(x => x[0] === key)[2](r)).length;
+    h += '<button class="chip" data-status="' + key + '" aria-pressed="' + (statusFilter === key) + '">' +
+         label + '<span class="tally">' + n + '</span></button>';
+  }
+  h += "</div>";
+
+  if (cellFilter){
+    h += '<div class="panel panel--sink" style="display:flex;gap:14px;align-items:center;justify-content:space-between">' +
+      '<span class="hint">Showing ' + cellFilter.ids.size + ' controls from the risk grid: ' + esc(cellFilter.label) + '</span>' +
+      '<button class="chip" id="clearCell">Clear grid filter</button></div>';
+  }
+
+  const vis = visibleResults();
+  if (!vis.length){
+    h += '<div class="empty"><p>No controls match this filter.</p>' +
+         '<p>Pick another domain in the left column, or set the status filter back to All.</p></div>';
+  } else {
+    h += vis.map(cardHTML).join("");
+  }
+  h += "</section>";
+  $("main").innerHTML = h;
+
+  const q = $("q");
+  q.oninput = () => {
+    searchTerm = q.value;
+    const at = q.selectionStart;
+    renderFieldwork();
+    const nq = $("q");
+    nq.focus();
+    nq.setSelectionRange(at, at);
+  };
+  $("main").querySelectorAll("[data-status]").forEach(b => {
+    b.onclick = () => { statusFilter = b.dataset.status; renderFieldwork(); };
+  });
+  if ($("clearCell")) $("clearCell").onclick = () => { cellFilter = null; renderFieldwork(); };
+  for (const r of vis){
+    const node = $("card-" + r.control.id);
+    if (node) wireCard(node, r.control.id);
+  }
+}
+
+/* ---- findings ----------------------------------------------------------- */
+function riskGridHTML(){
+  const cellIds = {};
+  for (const r of results.scored){
+    const k = SEV_RANK[r.control.severity] + ":" + r.score;
+    (cellIds[k] = cellIds[k] || []).push(r.control.id);
+  }
+  window.__cellIds = cellIds;
+
+  let h = '<table class="grid"><thead><tr><th></th>' +
+    [4,3,2,1,0].map(s => '<th>score ' + s + '</th>').join("") + '</tr></thead><tbody>';
+  for (const sev of ["critical","high","medium","low"]){
+    const rank = SEV_RANK[sev];
+    h += '<tr><th class="rowh">' + sev + ' (×' + rank + ')</th>';
+    for (const s of [4,3,2,1,0]){
+      const risk = rank * (4 - s);
+      const ids = cellIds[rank + ":" + s] || [];
+      const tint = risk === 0 ? 0 : Math.min(4, Math.ceil(risk / 4));
+      h += '<td><div class="cell cell--' + tint + (ids.length ? "" : " cell--empty") + '" ' +
+        'data-cell="' + rank + ":" + s + '" ' +
+        'title="' + sev + ' severity scored ' + s + ' of 4 — residual risk ' + risk +
+        ' of 16 (' + riskBandOf(risk) + '). ' + ids.length + ' controls."' +
+        (ids.length ? ' tabindex="0"' : "") + '>' +
+        '<span class="cell__n">' + (ids.length || "·") + '</span>' +
+        '<span class="cell__r">risk ' + risk + '</span></div></td>';
+    }
+    h += "</tr>";
+  }
+  h += "</tbody></table>";
+  return h;
+}
+
+function renderFindings(){
+  const r = results;
+  const gaps = buildGapRegister(r, state.assessment_date);
+  const pe = r.penalty_exposure;
+  const sev = r.gap_counts_by_severity;
+
+  let h = '<section class="sec"><div class="sec__head"><span class="lbl">Findings</span>' +
+    '<h2>Residual risk and the gap register</h2></div>';
+
+  h += '<div class="figs">' +
+    fig(pct(r.overall_maturity_pct), r.overall_band[0], "indigo") +
+    fig(r.gaps.length, "gaps below 3 of 4", "mark") +
+    fig(sev.critical, "critical-severity gaps", "mark") +
+    fig(pct(r.coverage_pct), r.assessed_count + " of " + r.in_scope_count + " assessed", "") +
+    fig("INR " + pe.aggregate_max_inr_crore + " cr", "exposure ceiling", "mark") +
+    "</div>";
+
+  h += '<p class="sec__lede">' + esc(r.overall_band[1]) + '</p>';
+
+  h += '<div class="panel"><span class="lbl">Residual risk · severity × shortfall</span>' +
+    '<p class="caveat" style="margin:6px 0 12px">Residual risk is severity rank multiplied by the shortfall from 4, ' +
+    'so the grid is the arithmetic rather than a judgement laid over it. Select a cell to work that population in Fieldwork.</p>' +
+    riskGridHTML() +
+    '<p class="gridkey">Bands: 12 and above Critical · 8–11 High · 4–7 Medium · 1–3 Low · 0 None. ' +
+    'Unassessed controls carry no risk figure and are reported as a scope limitation.</p></div>';
+
+  const sc = Object.entries(r.status_counts).sort((a, b) => b[1] - a[1]);
+  h += '<div class="panel panel--sink"><span class="lbl">Where the 90 controls stand</span><p class="caveat" style="margin-top:6px">' +
+    sc.map(([k, v]) => '<span class="num" style="font-weight:600">' + v + '</span> ' + esc(k)).join(" &nbsp;·&nbsp; ") +
+    '</p></div>';
+
+  if (pe.entries.length){
+    h += '<div class="panel"><span class="lbl">Penalty exposure under the Schedule</span>' +
+      '<div class="tw" style="margin-top:10px;border:0"><table class="t"><thead><tr>' +
+      '<th>Entry</th><th>Provision</th><th>Breach</th><th>Maximum</th><th>Controls engaging it</th>' +
+      '</tr></thead><tbody>';
+    for (const e of pe.entries){
+      h += '<tr><td class="c n">' + e.entry + '</td><td class="n">' + esc(e.provision) + '</td>' +
+        '<td>' + esc(e.breach) + '</td><td class="n">' + esc(e.label) + '</td>' +
+        '<td class="cids">' + esc(e.controls.join(", ")) + '</td></tr>';
+    }
+    h += '<tr style="background:var(--bond-sink)"><td colspan="3" style="text-align:right"><strong>Aggregate ceiling</strong></td>' +
+      '<td class="n" style="color:var(--mark);font-weight:600">INR ' + pe.aggregate_max_inr_crore + ' crore</td><td></td></tr>';
+    h += '</tbody></table></div><p class="caveat">' + esc(pe.caveat) + '</p></div>';
+  }
+
+  h += '<div class="sec__head" style="margin-top:26px"><span class="lbl">Gap register · ' + gaps.length + ' entries</span>' +
+    '<h2>Ordered by residual risk</h2></div>';
+  if (!gaps.length){
+    h += '<div class="empty"><p>No gaps recorded.</p><p>Score controls in Fieldwork; anything below 3 of 4 appears here with a priority and a target date.</p></div>';
+  } else {
+    h += '<div class="tw"><table class="t"><thead><tr>' +
+      ['Ref','Control','Domain','Severity','Score','Risk','Band','Priority','Target date','Owner','Evidence','Finding']
+        .map(x => "<th>" + x + "</th>").join("") + '</tr></thead><tbody>';
+    for (const g of gaps){
+      h += '<tr><td class="n">' + g.ref + '</td><td class="id">' + g.control_id + '</td>' +
+        '<td>' + esc(g.domain_name) + '</td>' +
+        '<td><span class="sev sev--' + g.severity.toLowerCase() + '">' + g.severity + '</span></td>' +
+        '<td class="c n">' + g.score + '</td><td class="c n">' + g.risk + '</td>' +
+        '<td class="n">' + g.risk_band + '</td>' +
+        '<td class="c"><span class="pri pri--' + g.priority + '">' + g.priority + '</span></td>' +
+        '<td class="n">' + esc(g.due_date) + '</td>' +
+        '<td>' + esc(g.owner) + '</td><td class="n">' + esc(g.evidence_ref) + '</td>' +
+        '<td style="min-width:26ch">' + esc(g.finding) + '</td></tr>';
+    }
+    h += "</tbody></table></div>";
+  }
+
+  if (r.unassessed.length){
+    h += '<div class="panel panel--sink" style="margin-top:18px"><span class="lbl">Scope limitation · ' +
+      r.unassessed.length + ' in-scope controls unassessed</span>' +
+      '<p class="caveat">These are reported as a limitation on the work performed, not as findings. ' +
+      'An unassessed control carries no score and no risk figure.</p>' +
+      '<p class="cids">' + esc(r.unassessed.map(x => x.control.id).join(", ")) + '</p></div>';
+  }
+
+  h += "</section>";
+  $("main").innerHTML = h;
+
+  $("main").querySelectorAll("[data-cell]").forEach(c => {
+    const ids = window.__cellIds[c.dataset.cell] || [];
+    if (!ids.length) return;
+    const go = () => {
+      const [rank, s] = c.dataset.cell.split(":");
+      const sevName = Object.keys(SEV_RANK).find(k => String(SEV_RANK[k]) === rank);
+      cellFilter = {ids:new Set(ids), label:sevName + " severity scored " + s + " of 4"};
+      domainFilter = "ALL"; statusFilter = "all"; searchTerm = "";
+      setView("field");
+    };
+    c.onclick = go;
+    c.onkeydown = ev => { if (ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); go(); } };
+  });
+}
+function fig(v, s, tone){
+  return '<div class="fig"><div class="fig__v' + (tone ? " fig__v--" + tone : "") + '">' + esc(v) + '</div>' +
+         '<div class="fig__s">' + esc(s) + '</div></div>';
+}
+
+/* ---- citations ---------------------------------------------------------- */
+function renderCitations(){
+  const slots = Object.entries(DATA.citations.rule_slots);
+  const usedBy = {};
+  for (const c of DATA.controls) if (c.rule_slot) (usedBy[c.rule_slot] = usedBy[c.rule_slot] || []).push(c.id);
+  const unver = slots.filter(([, s]) => s.status === "VERIFY_AGAINST_NOTIFIED_RULES");
+
+  let h = '<section class="sec"><div class="sec__head"><span class="lbl">Citations</span>' +
+    '<h2>What is cited, and what is not yet</h2></div>' +
+    '<p class="sec__lede">Every control is anchored to a section of the DPDP Act, 2023, which is cited in full. ' +
+    'Citations to the DPDP Rules are held as named slots. Where a slot has not been checked against the notified text ' +
+    'it renders as a ruled blank rather than a plausible-looking rule number — in this app, in the workbook and in the report. ' +
+    'Fill the slot once in <span class="num">controls/citations.yaml</span>, rebuild, and every deliverable carries the citation.</p>';
+
+  h += '<div class="figs">' +
+    fig(slots.length - unver.length, "slots verified", "") +
+    fig(unver.length, "slots awaiting verification", "mark") +
+    fig(DATA.controls.filter(c => c.rule_slot && unver.some(([k]) => k === c.rule_slot)).length, "controls relying on them", "") +
+    fig(DATA.citations.penalty_schedule.entries.length, "Schedule entries, all verified", "") +
+    "</div>";
+
+  h += '<div class="panel"><span class="lbl">Rules slots</span><div class="tw" style="margin-top:10px;border:0">' +
+    '<table class="t"><thead><tr><th>Slot</th><th>Subject</th><th>Act anchor</th><th>Rules citation</th><th>Status</th><th>Controls</th></tr></thead><tbody>';
+  for (const [key, s] of slots){
+    const ok = s.status !== "VERIFY_AGAINST_NOTIFIED_RULES";
+    h += '<tr><td class="n" style="font-size:11px">' + key.replace(/_/g, "_​") + '</td>' +
+      '<td>' + esc(s.subject || "") + '</td>' +
+      '<td class="n" style="font-size:11px">' + esc(s.anchors_act || "—") + '</td>' +
+      '<td>' + (s.citation ? '<span class="num">' + esc(s.citation) + '</span>'
+                           : '<span class="slot">&nbsp;</span>') + '</td>' +
+      '<td><span class="stat ' + (ok ? "stat--ok" : "stat--no") + '">' + esc(s.status) + '</span></td>' +
+      '<td class="cids">' + esc((usedBy[key] || []).join(", ") || "reserved — not referenced") + '</td></tr>';
+  }
+  h += "</tbody></table></div></div>";
+
+  h += '<div class="panel"><span class="lbl">Penalty Schedule to the DPDP Act, 2023 · verified against the Act</span>' +
+    '<div class="tw" style="margin-top:10px;border:0"><table class="t"><thead><tr>' +
+    '<th>Entry</th><th>Provision</th><th>Breach</th><th>Maximum penalty</th></tr></thead><tbody>';
+  for (const e of DATA.citations.penalty_schedule.entries){
+    h += '<tr><td class="c n">' + e.entry + '</td><td class="n">' + esc(e.provision) + '</td>' +
+      '<td>' + esc(e.breach) + '</td><td class="n">' + esc(e.label) + '</td></tr>';
+  }
+  h += '</tbody></table></div><p class="caveat">' + esc(DATA.citations.penalty_schedule.determination_factors_note || "") + '</p></div>';
+
+  const srcs = (DATA.citations.meta || {}).primary_sources_to_check || [];
+  if (srcs.length){
+    h += '<div class="panel panel--sink"><span class="lbl">Verify against</span><ul class="evlist" style="margin-top:6px">' +
+      srcs.map(s => '<li>' + esc(s) + '</li>').join("") + '</ul></div>';
+  }
+  h += "</section>";
+  $("main").innerHTML = h;
+}
+
+/* ---- scope -------------------------------------------------------------- */
+function renderScope(){
+  const p = state.profile;
+  const F = (label, key, obj, type, wide) =>
+    '<label class="f' + (wide ? " f--wide" : "") + '"><span class="lbl">' + label + '</span>' +
+    (type === "textarea"
+      ? '<textarea data-s="' + obj + "." + key + '" rows="3">' + esc(objGet(obj, key)) + '</textarea>'
+      : '<input data-s="' + obj + "." + key + '" type="' + (type || "text") + '" value="' + esc(objGet(obj, key)) + '">') +
+    "</label>";
+
+  let h = '<section class="sec"><div class="sec__head"><span class="lbl">Scope</span>' +
+    '<h2>Who is being audited, and which controls that puts in scope</h2></div>' +
+    '<p class="sec__lede">The answers below decide the composition of the audit, so the control set is reproducible from them. ' +
+    'Flags that widen scope default to on: silence widens the audit rather than quietly narrowing it, and every exemption has to be claimed.</p>';
+
+  h += '<div class="panel"><span class="lbl">The entity</span><div class="fields" style="margin-top:10px">' +
+    F("Legal name of the Data Fiduciary", "legal_name", "profile") +
+    F("Trading or brand name", "trading_name", "profile") +
+    F("Sector", "sector", "profile") +
+    F("Registered office", "registered_office", "profile") +
+    F("Headcount", "headcount", "profile", "number") +
+    F("Data Principals, approximate", "data_principal_count", "profile", "number") +
+    F("What the processing is, in one line", "business_description", "profile", "textarea", true) +
+    "</div></div>";
+
+  h += '<div class="panel"><span class="lbl">The engagement</span><div class="fields" style="margin-top:10px">' +
+    F("Assessment date", "assessment_date", "root", "date") +
+    F("Auditor", "auditor_name", "root") +
+    F("Firm", "auditor_firm", "root") +
+    F("Engagement reference", "engagement_ref", "root") +
+    F("Report title", "report_title", "root", "text", true) +
+    F("Scope statement", "scope_statement", "root", "textarea", true) +
+    "</div></div>";
+
+  h += '<div class="panel"><span class="lbl">Boundary · one per line</span><div class="fields" style="margin-top:10px">' +
+    LF("Entities within scope", "entities_in_scope") +
+    LF("Systems and environments examined", "systems_in_scope") +
+    LF("Exclusions from scope", "exclusions") +
+    "</div></div>";
+
+  const inScope = DATA.controls.filter(c => appliesTo(c, p.flags));
+  const out = DATA.controls.filter(c => !appliesTo(c, p.flags));
+  h += '<div class="panel"><span class="lbl">Applicability</span>' +
+    '<p class="caveat" style="margin:6px 0 14px"><span class="num" style="font-weight:600">' + inScope.length +
+    '</span> of <span class="num">' + DATA.controls.length + '</span> controls are in scope on these answers.' +
+    (out.length ? ' Out of scope: <span class="cids">' + out.map(c => esc(c.id) + " (" + esc(scopeReason(c, p.flags)) + ")").join("; ") + "</span>" : "") +
+    "</p>";
+  for (const f of DATA.profile_flags){
+    const gated = DATA.controls.filter(c => {
+      const a = c.applicability || {};
+      return (a.requires || []).includes(f.name) || (a.excluded_if || []).includes(f.name);
+    });
+    h += '<div class="flag"><div><div class="flag__name">' + f.name + '</div>' +
+      '<p class="flag__desc">' + esc(f.description) + '</p>' +
+      '<div class="flag__gates">' + (gated.length
+        ? "gates " + gated.length + " control" + (gated.length === 1 ? "" : "s") + ": " + gated.map(c => c.id).join(", ")
+        : "gates no controls in this library") +
+      ' · default ' + (f.default ? "on" : "off") + '</div></div>' +
+      '<button class="tog" data-flag="' + f.name + '" aria-pressed="' + flagValue(p.flags, f.name) + '">' +
+      (flagValue(p.flags, f.name) ? "Yes" : "No") + "</button></div>";
+  }
+  h += "</div>";
+
+  h += '<div class="panel panel--sink"><span class="lbl">Carried into the report</span>' +
+    '<p class="caveat">Scoping assumptions and limitations travel with the assessment file and print in the report. ' +
+    'They are editable in the file; the two DPDP-specific assumptions below are set for you.</p>' +
+    '<ul class="evlist" style="margin-top:8px">' +
+    state.scoping_assumptions.map(s => '<li>' + esc(s) + '</li>').join("") + '</ul></div>';
+
+  h += "</section>";
+  $("main").innerHTML = h;
+
+  $("main").querySelectorAll("[data-s]").forEach(inp => {
+    inp.oninput = () => {
+      const [obj, key] = inp.dataset.s.split(".");
+      let v = inp.value;
+      if (inp.type === "number") v = v === "" ? null : parseInt(v, 10);
+      if (obj === "profile") state.profile[key] = v; else state[key] = v;
+      touch(); renderMast(); renderSpine(); renderTallies();
+    };
+  });
+  $("main").querySelectorAll("[data-l]").forEach(inp => {
+    inp.oninput = () => {
+      state.profile[inp.dataset.l] = inp.value.split("\n").map(s => s.trim()).filter(Boolean);
+      touch();
+    };
+  });
+  $("main").querySelectorAll("[data-flag]").forEach(btn => {
+    btn.onclick = () => {
+      const name = btn.dataset.flag;
+      state.profile.flags[name] = !flagValue(state.profile.flags, name);
+      for (const c of DATA.controls) if (appliesTo(c, state.profile.flags)) response(state, c.id);
+      touch();
+      const y = window.scrollY;
+      renderScope(); renderSpine(); renderTallies();
+      window.scrollTo(0, y);
+    };
+  });
+}
+function LF(label, key){
+  return '<label class="f f--wide"><span class="lbl">' + label + '</span>' +
+    '<textarea data-l="' + key + '" rows="3">' + esc((state.profile[key] || []).join("\n")) + '</textarea></label>';
+}
+function objGet(obj, key){
+  const v = obj === "profile" ? state.profile[key] : state[key];
+  return v === null || v === undefined ? "" : v;
+}
+
+/* ======================================================================== */
+/* SHELL                                                                    */
+/* ======================================================================== */
+function setView(v){
+  view = v;
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.view === v)));
+  renderView();
+  window.scrollTo(0, 0);
+}
+function renderView(){
+  if (view === "scope") renderScope();
+  else if (view === "find") renderFindings();
+  else if (view === "cite") renderCitations();
+  else renderFieldwork();
+}
+
+document.querySelectorAll(".tab").forEach(t => { t.onclick = () => setView(t.dataset.view); });
+
+$("btnSave").onclick = () => {
+  const p = state.profile;
+  const slug = (p.trading_name || p.legal_name || "engagement")
+    .replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "") || "engagement";
+  const blob = new Blob([JSON.stringify(exportPayload(), null, 2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = slug + "_dpdpa_assessment.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  setSaveState("saved — run report on it");
+};
+$("btnOpen").onclick = () => $("fileIn").click();
+$("fileIn").onchange = ev => {
+  const f = ev.target.files[0];
+  if (!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try{
+      state = normalise(JSON.parse(rd.result));
+      touch(); renderAll();
+      setSaveState("opened " + f.name);
+    }catch(e){
+      setSaveState("that file did not parse");
+      alert("That file is not a readable assessment file.\n\n" + e.message +
+            "\n\nExpected the JSON written by this app or by python -m dpdpa_audit init.");
+    }
+  };
+  rd.readAsText(f);
+  ev.target.value = "";
+};
+$("btnNew").onclick = () => {
+  if (!confirm("Start a new assessment? The current one is discarded unless you have saved it to a file.")) return;
+  state = blankAssessment();
+  domainFilter = "ALL"; statusFilter = "all"; searchTerm = ""; cellFilter = null;
+  touch(); renderAll(); setView("scope");
+};
+
+/* Boot: whatever the browser kept, else the worked example that ships with
+   the toolkit, so the app is never an empty room. */
+(function boot(){
+  let raw = null;
+  try{ raw = localStorage.getItem(STORE_KEY); }catch(e){ raw = null; }
+  if (raw){
+    try{ state = normalise(JSON.parse(raw)); setSaveState("kept in this browser"); }
+    catch(e){ state = null; }
+  }
+  if (!state && SAMPLE){
+    state = normalise(SAMPLE);
+    setSaveState("sample engagement loaded");
+  }
+  if (!state){ state = blankAssessment(); setSaveState("new assessment"); }
+  recompute();
+  renderMast();
+  renderSpine();
+  renderTallies();
+  setView("field");
+})();
+</script>
+</body>
+</html>

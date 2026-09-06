@@ -1,0 +1,294 @@
+# =============================================================================
+# DPDPA AUDIT TOOLKIT — CENTRAL CITATION REGISTRY
+# =============================================================================
+#
+# This is the ONLY file you need to edit to add verified DPDP Rules citations.
+# Every control in controls/*.yaml references a rule slot by key (rule_slot:).
+# Fill in `citation:` here once, flip `status:` to VERIFIED_RULES, and the
+# citation propagates to the control matrix, the gap register, the Word report
+# and the web app automatically.
+#
+# CITATION STATUS VALUES
+#   VERIFIED_ACT    — Statutory text of the DPDP Act, 2023 (Act No. 22 of 2023).
+#                     Stable, unamended, high confidence.
+#   VERIFIED_RULES  — Confirmed against the notified DPDP Rules by a named
+#                     reviewer. Record who and when in `verified_by` /
+#                     `verified_on`.
+#   VERIFY_AGAINST_NOTIFIED_RULES
+#                   — Subject matter is known to be dealt with by the Rules,
+#                     but the rule number is NOT populated. Deliberately blank.
+#                     Reported in the "Unverified Citations" appendix.
+#
+# WHY THE SLOTS ARE EMPTY
+#   The toolkit was authored without access to the notified Rules text. Rule
+#   numbers were left blank rather than reconstructed from memory, because an
+#   incorrect statutory citation inside a signed audit report is materially
+#   worse than a visibly absent one — it passes review and reaches the
+#   regulator unchallenged. Populate from the eGazette notification or the
+#   MeitY-published Rules before issuing a report externally.
+# =============================================================================
+
+meta:
+  registry_version: "1.0.0"
+  act_short_name: "DPDP Act, 2023"
+  act_long_name: "The Digital Personal Data Protection Act, 2023 (Act No. 22 of 2023)"
+  rules_short_name: "DPDP Rules"
+  rules_status_note: >-
+    Rule numbering, phased commencement dates and prescribed thresholds were
+    not verifiable at authoring time. Each rule slot below carries the subject
+    matter the Rules are understood to address, with the citation left blank.
+  primary_sources_to_check:
+    - "eGazette notification of the Digital Personal Data Protection Rules — egazette.gov.in"
+    - "MeitY data protection framework page — meity.gov.in"
+    - "India Code, DPDP Act 2023 bare text — india-code.nic.in"
+    - "Any MeitY FAQ or business-requirements document issued alongside the Rules"
+
+# -----------------------------------------------------------------------------
+# PENALTY SCHEDULE — Section 33 read with the Schedule to the DPDP Act, 2023
+# -----------------------------------------------------------------------------
+# Maximum penalties the Data Protection Board may impose per the Schedule.
+# These are Act-level (not Rules-level) and are cited with confidence.
+# Entry numbering follows the Schedule as enacted.
+# -----------------------------------------------------------------------------
+penalty_schedule:
+  status: VERIFIED_ACT
+  source: "Section 33 read with the Schedule, DPDP Act, 2023"
+  currency: INR
+  entries:
+    - entry: 1
+      breach: "Breach of the obligation to take reasonable security safeguards to prevent personal data breach"
+      provision: "s.8(5)"
+      max_penalty_inr_crore: 250
+      label: "Up to INR 250 crore"
+    - entry: 2
+      breach: "Breach of the obligation to give the Board or affected Data Principal notice of a personal data breach"
+      provision: "s.8(6)"
+      max_penalty_inr_crore: 200
+      label: "Up to INR 200 crore"
+    - entry: 3
+      breach: "Breach of additional obligations in relation to children"
+      provision: "s.9"
+      max_penalty_inr_crore: 200
+      label: "Up to INR 200 crore"
+    - entry: 4
+      breach: "Breach of additional obligations of a Significant Data Fiduciary"
+      provision: "s.10"
+      max_penalty_inr_crore: 150
+      label: "Up to INR 150 crore"
+    - entry: 5
+      breach: "Breach of the duties of a Data Principal"
+      provision: "s.15"
+      max_penalty_inr_crore: 0.001
+      label: "Up to INR 10,000"
+    - entry: 6
+      breach: "Breach of any term of a voluntary undertaking accepted by the Board"
+      provision: "s.32"
+      max_penalty_inr_crore: null
+      label: "Up to the extent applicable for the breach in respect of which proceedings were instituted"
+    - entry: 7
+      breach: "Breach of any other provision of the Act or rules made thereunder (residuary)"
+      provision: "residuary"
+      max_penalty_inr_crore: 50
+      label: "Up to INR 50 crore"
+  determination_factors_note: >-
+    Section 33(2) requires the Board, when determining quantum, to have regard to
+    factors including the nature, gravity and duration of the breach, the type and
+    nature of the personal data affected, repetitive nature of the breach, whether
+    any gain was realised or loss avoided, mitigating action taken and its
+    timeliness and effectiveness, proportionality and effectiveness of the penalty,
+    and the likely impact of the penalty on the person. Auditors should note that
+    documented, timely mitigation is an express mitigating factor — which is itself
+    an argument for maintaining the evidence this toolkit collects.
+
+# -----------------------------------------------------------------------------
+# RULES SLOTS — fill `citation` in, then set status to VERIFIED_RULES
+# -----------------------------------------------------------------------------
+rule_slots:
+
+  NOTICE_CONTENT:
+    subject: "Prescribed form, contents and presentation of the notice given to a Data Principal, including itemised description of personal data and purpose, and clarity/plain-language requirements"
+    anchors_act: "s.5(1), s.5(3), s.40(2)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  CONSENT_REQUEST_FORM:
+    subject: "Manner in which a consent request is to be presented, including plain-language requirement and contact details of the person answering on behalf of the Data Fiduciary"
+    anchors_act: "s.6(3)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  CONSENT_MANAGER_REGISTRATION:
+    subject: "Conditions of registration of a Consent Manager with the Board, including any minimum net-worth or financial-capacity threshold, technical and operational capability, and governance conditions"
+    anchors_act: "s.6(9)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+    note: "A net-worth floor was proposed in the draft stage. Do not cite any figure until confirmed against the notified Rules."
+
+  CONSENT_MANAGER_OBLIGATIONS:
+    subject: "Obligations of a registered Consent Manager, including consent record-keeping, interoperability, and accountability to the Data Principal"
+    anchors_act: "s.6(7), s.6(8), s.6(9)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  SECURITY_SAFEGUARDS:
+    subject: "Prescribed reasonable security safeguards — understood to address measures such as encryption/obfuscation/masking, access control, monitoring and logging, retention of logs, backup and recovery, and contractual flow-down to processors"
+    anchors_act: "s.8(4), s.8(5)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  BREACH_INTIMATION:
+    subject: "Form, contents, timing and manner of intimating a personal data breach to the Board and to each affected Data Principal, including any initial-versus-detailed reporting split and the outer time limit"
+    anchors_act: "s.8(6)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+    note: "CRITICAL SLOT. The reporting clock is the single most operationally sensitive number in the framework. A draft-stage outer limit was widely discussed; do not cite any period until confirmed."
+
+  RETENTION_ERASURE_PERIODS:
+    subject: "Time periods after which personal data must be erased, and the classes of Data Fiduciary and user-count thresholds to which specified periods apply; also any pre-erasure advance notice to the Data Principal"
+    anchors_act: "s.8(7), s.8(10)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+    note: "Class-based thresholds (e.g. for e-commerce, online gaming and social media intermediaries) were proposed in draft. Confirm both the classes and the numeric thresholds before applying."
+
+  DP_CONTACT_PUBLICATION:
+    subject: "Manner of publishing the business contact information of the Data Protection Officer, or of the person able to answer questions about processing on behalf of the Data Fiduciary"
+    anchors_act: "s.8(8)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  GRIEVANCE_RESPONSE_PERIOD:
+    subject: "Period within which a Data Fiduciary or Consent Manager must respond to a grievance of a Data Principal"
+    anchors_act: "s.13(2)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  RIGHTS_REQUEST_HANDLING:
+    subject: "Manner in which a Data Principal makes a request to exercise rights, and the manner and period for the Data Fiduciary's response, including verification of identity"
+    anchors_act: "s.11, s.12, s.13"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  NOMINATION:
+    subject: "Manner in which a Data Principal may nominate another individual to exercise rights in the event of death or incapacity"
+    anchors_act: "s.14"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  CHILD_CONSENT_VERIFICATION:
+    subject: "Manner of obtaining and verifying the consent of a parent or lawful guardian, including due-diligence steps to confirm the adult is identifiable and is in fact the parent/guardian"
+    anchors_act: "s.9(1)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  CHILD_EXEMPT_CLASSES:
+    subject: "Classes of Data Fiduciary, and purposes, exempted from some or all of the additional obligations concerning children, and any lowered age threshold for verifiably safe processing"
+    anchors_act: "s.9(4), s.9(5)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+    note: "Exemptions here can materially change applicability for healthcare, education and child-safety services. Check before scoping a child-data audit."
+
+  SDF_DPIA_AUDIT:
+    subject: "Manner and periodicity of the Data Protection Impact Assessment and of the independent audit required of a Significant Data Fiduciary, and the reporting of outcomes"
+    anchors_act: "s.10(2)(c)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  SDF_ALGORITHMIC_DUE_DILIGENCE:
+    subject: "Due diligence required of a Significant Data Fiduciary to verify that algorithmic software deployed for processing is not likely to pose a risk to the rights of Data Principals"
+    anchors_act: "s.10(2)(c)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  SDF_TRANSFER_RESTRICTION:
+    subject: "Any restriction on transfer outside India, by a Significant Data Fiduciary, of specified personal data or traffic/flow data"
+    anchors_act: "s.10(2)(c), s.16"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  CROSS_BORDER_CONDITIONS:
+    subject: "Conditions or restrictions attaching to transfer of personal data to a country or territory outside India, and the mechanism of notification of restricted countries"
+    anchors_act: "s.16(1)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+    note: >-
+      Section 16 operates as a negative-list mechanism: transfer is permitted
+      except to countries the Central Government notifies as restricted. Section
+      16(2) preserves any higher restriction imposed by other law (for example
+      sectoral RBI or IRDAI localisation directions), which frequently binds
+      more tightly than the DPDP Act itself.
+
+  RESEARCH_ARCHIVING_STANDARDS:
+    subject: "Standards subject to which processing for research, archiving or statistical purposes is exempt from specified provisions"
+    anchors_act: "s.17(2)(b)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  STARTUP_EXEMPTION_CLASSES:
+    subject: "Classes of Data Fiduciary, including startups, notified as exempt from specified provisions, and the conditions of that exemption"
+    anchors_act: "s.17(3)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+    note: "s.17(3) permits exemption from s.5, s.8(3), s.8(7), s.10 and s.11 for notified classes. Confirm whether the entity actually falls in a notified class — self-assessment as a startup is not sufficient."
+
+  BOARD_PROCEEDINGS:
+    subject: "Procedure for making a complaint to the Board, the conduct of inquiry, and the manner of digital functioning of the Board"
+    anchors_act: "s.27, s.28"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+
+  COMMENCEMENT_PHASING:
+    subject: "Dates on which particular provisions of the Act and Rules come into force, including any phased or tranched commencement schedule"
+    anchors_act: "s.1(2)"
+    citation: null
+    status: VERIFY_AGAINST_NOTIFIED_RULES
+    verified_by: null
+    verified_on: null
+    note: >-
+      HIGHEST-PRIORITY SLOT. The commencement schedule determines whether an
+      obligation is presently enforceable or merely forthcoming, which changes
+      every finding in the report from a breach into a readiness gap or the
+      reverse. The toolkit therefore reports compliance posture against the
+      full framework and records commencement as an explicit, unresolved
+      scoping assumption rather than silently assuming all duties are live.
+      Resolve this before issuing any report that characterises a gap as a
+      contravention.

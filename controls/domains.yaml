@@ -1,0 +1,245 @@
+# =============================================================================
+# DPDPA AUDIT TOOLKIT — DOMAIN DEFINITIONS
+# =============================================================================
+# Domains group controls into the sections of the audit report. `weight` sets
+# each domain's contribution to the overall maturity score; `order` sets the
+# sequence in the report and the web app.
+# =============================================================================
+
+meta:
+  library_version: "1.0.0"
+
+domains:
+
+  - code: APP
+    order: 1
+    name: "Applicability & Role Determination"
+    weight: 1.0
+    scope_question: >-
+      Does the entity correctly understand whether the Act applies to it, in what
+      capacity, and with what exemptions?
+    why_it_matters: >-
+      Every downstream obligation depends on this determination. An entity that
+      has mis-scoped itself as a Data Processor, or has assumed an exemption it
+      does not hold, will have built its entire programme on the wrong footing.
+      This domain is audited first and its findings gate the rest of the report.
+
+  - code: GOV
+    order: 2
+    name: "Governance, Accountability & Records"
+    weight: 1.2
+    scope_question: >-
+      Is there an accountable owner, a documented programme, and a record of
+      processing sufficient to demonstrate compliance to the Board?
+    why_it_matters: >-
+      Section 8(1) makes the Data Fiduciary responsible for compliance including
+      for processing carried out by a Data Processor on its behalf. Section 6(10)
+      places the burden of proving valid consent on the Data Fiduciary. Both are
+      evidential burdens — an entity that is compliant in practice but cannot
+      demonstrate it will fail an inquiry.
+
+  - code: PUR
+    order: 3
+    name: "Lawful Purpose, Minimisation & Accuracy"
+    weight: 1.0
+    scope_question: >-
+      Is personal data processed only for a lawful purpose, limited to what is
+      necessary, and kept accurate where it drives decisions?
+    why_it_matters: >-
+      Section 4 permits processing only for a lawful purpose and only with consent
+      or for a legitimate use. Section 6(1) limits consent to the personal data
+      necessary for the specified purpose, and section 6(2) invalidates consent to
+      the extent it covers anything beyond that — so over-collection does not merely
+      breach a principle, it voids the lawful basis for the excess.
+
+  - code: NOT
+    order: 4
+    name: "Notice"
+    weight: 1.1
+    scope_question: >-
+      Is a compliant notice given with or before every consent request, and was
+      retrospective notice given for pre-commencement consent?
+    why_it_matters: >-
+      Notice is the mechanism by which consent becomes informed. A defective
+      notice therefore undermines the validity of the consent obtained on the back
+      of it, converting a transparency failure into a lawful-basis failure.
+
+  - code: CON
+    order: 5
+    name: "Consent"
+    weight: 1.3
+    scope_question: >-
+      Is consent free, specific, informed, unconditional and unambiguous, with
+      a genuine and equally easy withdrawal path — and can the entity prove it?
+    why_it_matters: >-
+      Consent is the principal lawful basis under the Act and the one most
+      commonly implemented defectively: bundled, pre-ticked, conditioned on
+      service, or withdrawable only by writing to an inbox. Section 6(10) puts the
+      burden of proof on the Data Fiduciary, which makes the consent artefact —
+      not the consent policy — the audited object.
+
+  - code: CMG
+    order: 6
+    name: "Consent Manager"
+    weight: 0.8
+    scope_question: >-
+      Where consent is given or managed through a Consent Manager, is that entity
+      registered with the Board and are the interfaces sound?
+    why_it_matters: >-
+      Section 6(7) lets a Data Principal give, manage, review and withdraw consent
+      through a Consent Manager, which must be registered with the Board and is
+      accountable to the Data Principal. Relying on an unregistered intermediary
+      does not transfer the Data Fiduciary's own accountability under section 8(1).
+
+  - code: LGU
+    order: 7
+    name: "Legitimate Uses"
+    weight: 0.9
+    scope_question: >-
+      Where processing proceeds without consent, is a specific section 7
+      legitimate use correctly identified and documented?
+    why_it_matters: >-
+      Section 7 is a closed list, not a balancing test. There is no general
+      "legitimate interests" ground of the kind found in the GDPR, so an entity
+      that has mapped its GDPR legitimate-interests assessments across to the Act
+      will usually find the ground does not exist here. Over-reliance on the
+      employment limb in section 7(i) is the most frequent error.
+
+  - code: RET
+    order: 8
+    name: "Retention & Erasure"
+    weight: 1.1
+    scope_question: >-
+      Is personal data erased when consent is withdrawn or the purpose is served,
+      and is that erasure propagated to processors and backups?
+    why_it_matters: >-
+      Section 8(7) requires erasure on withdrawal of consent or once the purpose
+      is no longer being served, unless retention is required by law, and requires
+      the Data Fiduciary to cause its processors to erase as well. Erasure that
+      stops at the primary database — leaving data in warehouses, logs, backups and
+      vendor systems — is the standard finding here.
+
+  - code: RGT
+    order: 9
+    name: "Data Principal Rights"
+    weight: 1.1
+    scope_question: >-
+      Can a Data Principal actually obtain access, correction, erasure and
+      nomination, within the prescribed period and without undue friction?
+    why_it_matters: >-
+      Rights under sections 11, 12 and 14 are tested by exercising them, not by
+      reading the privacy policy. The audit approach in this domain is deliberately
+      operational: submit requests and measure what happens.
+
+  - code: GRV
+    order: 10
+    name: "Grievance Redressal"
+    weight: 1.0
+    scope_question: >-
+      Is there an effective, reachable grievance mechanism that responds within
+      the prescribed period?
+    why_it_matters: >-
+      Section 8(9) requires an effective mechanism and section 13 makes it a
+      right. A Data Principal must exhaust it before approaching the Board, which
+      means the grievance channel is the entity's own opportunity to resolve a
+      matter before it becomes an inquiry. A channel that does not respond
+      converts routine complaints into Board complaints.
+
+  - code: SEC
+    order: 11
+    name: "Security Safeguards"
+    weight: 1.4
+    scope_question: >-
+      Are reasonable security safeguards implemented to prevent a personal data
+      breach, including in respect of processors?
+    why_it_matters: >-
+      Section 8(5) carries the highest penalty exposure in the Schedule — up to
+      INR 250 crore. Note the construction: the duty is to take reasonable
+      safeguards to prevent a breach, so liability can attach to the inadequacy of
+      the safeguards themselves, independently of whether a breach has occurred.
+
+  - code: BRC
+    order: 12
+    name: "Personal Data Breach Notification"
+    weight: 1.3
+    scope_question: >-
+      Can the entity detect, assess and intimate a personal data breach to the
+      Board and to every affected Data Principal, in the prescribed manner?
+    why_it_matters: >-
+      Section 8(6) requires intimation to the Board and to each affected Data
+      Principal, with penalty exposure up to INR 200 crore. The Act draws no
+      materiality threshold on its face — the assumption that only "significant"
+      breaches are reportable is a common and expensive misreading. Notification to
+      every affected individual is operationally demanding and needs to be
+      rehearsed, not merely documented.
+
+  - code: CHD
+    order: 13
+    name: "Children & Persons with Disability"
+    weight: 1.2
+    scope_question: >-
+      Is verifiable parental or guardian consent obtained, and are tracking,
+      behavioural monitoring and targeted advertising to children prevented?
+    why_it_matters: >-
+      Section 9 sets the age of a child at below eighteen years — materially
+      higher than the thirteen-to-sixteen range most global platforms are built
+      for — and prohibits tracking, behavioural monitoring and targeted advertising
+      directed at children outright, with no consent-based cure. Penalty exposure
+      is up to INR 200 crore. The same regime extends to persons with disability
+      who have a lawful guardian.
+
+  - code: PRO
+    order: 14
+    name: "Processors & Vendor Contracts"
+    weight: 1.1
+    scope_question: >-
+      Is every Data Processor engaged under a valid contract, with safeguards,
+      erasure and breach obligations flowed down and monitored?
+    why_it_matters: >-
+      Section 8(1) leaves the Data Fiduciary responsible for a processor's
+      processing, and section 8(2) permits engagement only under a valid contract.
+      The exposure is asymmetric: the vendor's failure is the entity's penalty.
+      Sub-processors are where this domain usually breaks.
+
+  - code: XBD
+    order: 15
+    name: "Cross-Border Transfers"
+    weight: 0.9
+    scope_question: >-
+      Are transfers outside India mapped, and compliant with both section 16 and
+      any stricter sectoral law?
+    why_it_matters: >-
+      Section 16 restricts transfer to countries the Central Government notifies,
+      operating as a negative list rather than an adequacy regime. Section 16(2)
+      expressly preserves higher restrictions under other law, so sectoral
+      localisation directions — RBI payment data being the clearest example — bind
+      more tightly than the Act and are the real constraint for regulated entities.
+
+  - code: SDF
+    order: 16
+    name: "Significant Data Fiduciary Obligations"
+    weight: 1.2
+    scope_question: >-
+      If notified as a Significant Data Fiduciary, are the DPO, independent
+      auditor, DPIA, periodic audit and algorithmic due diligence in place?
+    why_it_matters: >-
+      Section 10 obligations attach only on notification by the Central
+      Government, but the factors in section 10(1) — volume and sensitivity of
+      data, risk to Data Principals' rights, risk to electoral democracy, security
+      of the State — are reasonably foreseeable. An entity plainly within them
+      should be building capability ahead of designation rather than after it.
+      Penalty exposure is up to INR 150 crore.
+
+  - code: BRD
+    order: 17
+    name: "Enforcement Readiness & Board Engagement"
+    weight: 0.7
+    scope_question: >-
+      Could the entity respond to a Board inquiry, produce evidence on demand,
+      and make an informed decision about a voluntary undertaking?
+    why_it_matters: >-
+      Section 28 governs inquiry procedure, section 32 permits a voluntary
+      undertaking at any stage and section 33(2) makes prompt, effective mitigation
+      an express factor in reducing quantum. Readiness here is not a compliance
+      obligation in itself; it is what determines the cost of everything else going
+      wrong.

@@ -1,0 +1,416 @@
+# =============================================================================
+# DPDPA CONTROL LIBRARY — 03: DATA LIFECYCLE & DATA PRINCIPAL EXPERIENCE
+# Domains: RET (Retention & Erasure), RGT (Rights), GRV (Grievance Redressal)
+# Schema documented in 01_foundation.yaml
+# =============================================================================
+
+controls:
+
+# -----------------------------------------------------------------------------
+# RET — RETENTION & ERASURE
+# -----------------------------------------------------------------------------
+
+- id: RET-01
+  domain: RET
+  title: "Retention schedule defined per data category and purpose"
+  obligation: >-
+    Personal data must be erased on withdrawal of consent or as soon as it is
+    reasonable to assume the specified purpose is no longer being served,
+    whichever is earlier, unless retention is necessary for compliance with law.
+  act_ref: "s.8(7), DPDP Act, 2023"
+  rule_slot: RETENTION_ERASURE_PERIODS
+  audit_question: >-
+    Is there a retention schedule stating, per data category and purpose, how long
+    data is kept and on what legal footing — with retention beyond purpose
+    justified by a specific legal requirement rather than by general prudence?
+  test_procedure: "Inspect the retention schedule against the processing register; test the stated legal basis for each retention period exceeding the purpose."
+  evidence_expected:
+    - "Retention schedule mapped to data categories and purposes"
+    - "Specific statutory or regulatory citation for each extended retention period"
+    - "Approval and periodic review records"
+  scoring:
+    "0": "No retention schedule. Data is retained indefinitely by default."
+    "2": "A schedule exists for principal categories but extended retention rests on unspecified 'legal and regulatory requirements' without citation, or omits secondary stores entirely."
+    "4": "A complete schedule covers every category and purpose, each extended period cites the specific legal requirement, and the schedule is reviewed and approved on a defined cycle."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: RET-02
+  domain: RET
+  title: "Erasure on withdrawal of consent or purpose completion"
+  obligation: >-
+    On withdrawal of consent or once the purpose is no longer being served, the
+    Data Fiduciary must erase the personal data, unless retention is necessary for
+    compliance with any law.
+  act_ref: "s.8(7), DPDP Act, 2023"
+  rule_slot: RETENTION_ERASURE_PERIODS
+  audit_question: >-
+    Is erasure actually triggered and completed on withdrawal or purpose
+    completion — and is it erasure, as distinct from a soft-delete flag that leaves
+    the record fully intact and queryable?
+  test_procedure: "Re-performance: withdraw consent for a test record, then query every store directly to confirm the data is gone rather than flagged."
+  evidence_expected:
+    - "Automated erasure triggers tied to withdrawal and purpose-completion events"
+    - "Evidence from direct queries that data is removed, not merely flagged"
+    - "Erasure logs recording what was erased and when"
+  scoring:
+    "0": "No erasure occurs. Records persist indefinitely after withdrawal."
+    "2": "Erasure is implemented as a soft-delete or status flag, leaving data present and accessible, or runs only as an unmonitored manual periodic job."
+    "4": "Erasure is automatically triggered, verified by direct query across stores, logged, and exceptions where law requires retention are individually documented."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+  applicability:
+    excluded_if: [startup_exempt_s8_7]
+
+- id: RET-03
+  domain: RET
+  title: "Erasure propagated to processors, backups and derived stores"
+  obligation: >-
+    The Data Fiduciary must cause its Data Processors to erase personal data that
+    was made available to them for processing.
+  act_ref: "s.8(7), DPDP Act, 2023"
+  rule_slot: RETENTION_ERASURE_PERIODS
+  audit_question: >-
+    Does erasure reach processors, data warehouses, analytics environments, search
+    indices, caches, logs and backups — and is completion confirmed rather than
+    assumed?
+  test_procedure: "Trace an erasure request across the full data topology; inspect processor erasure confirmations; test the treatment of backups and derived datasets."
+  evidence_expected:
+    - "Data topology map identifying every store holding personal data"
+    - "Processor erasure instructions and written confirmations of completion"
+    - "Documented approach to backups, including erasure on restore"
+  scoring:
+    "0": "Erasure is confined to the primary system. Processors and secondary stores are not addressed."
+    "2": "Processors are instructed but completion is not confirmed, and derived stores — warehouses, indices, logs — are missed or handled inconsistently."
+    "4": "A complete topology drives erasure across every store, processors return confirmations that are tracked, and the backup approach is documented including re-erasure on restore."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: RET-04
+  domain: RET
+  title: "Deemed purpose completion on Data Principal inactivity"
+  obligation: >-
+    The purpose is deemed no longer to be served if the Data Principal neither
+    approaches the Data Fiduciary for the performance of the purpose nor exercises
+    any of their rights in relation to it, for such period as may be prescribed.
+  act_ref: "s.8(10), DPDP Act, 2023"
+  rule_slot: RETENTION_ERASURE_PERIODS
+  audit_question: >-
+    Does the entity track Data Principal inactivity and treat the prescribed period
+    of inactivity as triggering erasure — and does it know whether it falls within a
+    class for which specific periods are prescribed?
+  test_procedure: "Inspect inactivity tracking and the erasure trigger; test the class determination against the prescribed thresholds; sample dormant records for erasure."
+  evidence_expected:
+    - "Inactivity definition and tracking mechanism per data category"
+    - "Class determination assessment against the prescribed thresholds"
+    - "Erasure records for dormant populations"
+  scoring:
+    "0": "Inactivity is not tracked. Dormant records are retained indefinitely."
+    "2": "Inactivity is tracked for some populations but no erasure trigger is wired to it, or the entity has not determined whether prescribed class-based periods apply to it."
+    "4": "Inactivity is tracked per category, the class determination is documented, erasure triggers operate on the prescribed period, and dormant-population erasure is evidenced."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+
+- id: RET-05
+  domain: RET
+  title: "Advance notice before erasure where required"
+  obligation: >-
+    The Rules are understood to require advance intimation to the Data Principal
+    before erasure on the expiry of a prescribed retention period, so that the
+    individual may act to preserve access if they wish.
+  act_ref: "s.8(7), s.8(10) read with the Rules, DPDP Act, 2023"
+  rule_slot: RETENTION_ERASURE_PERIODS
+  audit_question: >-
+    Where a prescribed retention period is about to expire, is advance notice given
+    to the Data Principal in the prescribed manner and within the prescribed
+    period before erasure?
+  test_procedure: "Inspect the pre-erasure notification mechanism and despatch logs; test that timing precedes erasure by the required interval."
+  evidence_expected:
+    - "Pre-erasure notification template and trigger configuration"
+    - "Despatch logs showing notice preceding erasure by the required interval"
+    - "Handling of Data Principal responses to such notices"
+  scoring:
+    "0": "No pre-erasure notification capability exists."
+    "2": "Notification is possible but manual, inconsistently applied, or sent without a controlled interval before erasure."
+    "4": "Pre-erasure notification is automated on the prescribed interval, despatch is logged, and responses are handled through a defined process."
+  severity: medium
+  weight: 0.9
+  penalty_entry: 7
+  citation_caution: >-
+    The existence and length of the advance-notice period, and the classes to
+    which it applies, must be confirmed against the notified Rules before this
+    control is reported as a contravention rather than a readiness gap.
+
+# -----------------------------------------------------------------------------
+# RGT — DATA PRINCIPAL RIGHTS
+# -----------------------------------------------------------------------------
+
+- id: RGT-01
+  domain: RGT
+  title: "Right to access information about personal data"
+  obligation: >-
+    A Data Principal who has previously given consent is entitled, on request, to
+    a summary of the personal data being processed and the processing activities
+    undertaken, the identities of all other Data Fiduciaries and Data Processors
+    with whom the personal data has been shared together with a description of the
+    data shared, and any other prescribed information.
+  act_ref: "s.11(1), DPDP Act, 2023"
+  rule_slot: RIGHTS_REQUEST_HANDLING
+  audit_question: >-
+    Can the entity produce, on request, a summary of the data held, the processing
+    activities, and the identities of every recipient with a description of what was
+    shared? The recipient-identity element is the part most commonly absent.
+  test_procedure: "Re-performance: submit an access request as a Data Principal and evaluate the completeness of the response against the statutory requirements."
+  evidence_expected:
+    - "Access request procedure and fulfilment records"
+    - "Sample response demonstrating all three statutory elements"
+    - "Mechanism for compiling recipient identities and data shared"
+  scoring:
+    "0": "No access mechanism. Requests are handled ad hoc or not at all."
+    "2": "A summary of data held can be produced, but processing activities or recipient identities and shared-data descriptions are omitted or incomplete."
+    "4": "Testing confirms responses cover all statutory elements including full recipient identities and descriptions of data shared, produced within the prescribed period through a repeatable process."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+  applicability:
+    excluded_if: [startup_exempt_s11]
+
+- id: RGT-02
+  domain: RGT
+  title: "Right to correction, completion and updating"
+  obligation: >-
+    A Data Principal has the right to correction, completion and updating of
+    personal data. On receiving such a request the Data Fiduciary must correct
+    inaccurate or misleading data, complete incomplete data, and update it.
+  act_ref: "s.12(1), s.12(2), DPDP Act, 2023"
+  rule_slot: RIGHTS_REQUEST_HANDLING
+  audit_question: >-
+    Can a Data Principal have data corrected, completed and updated, and do those
+    corrections propagate to processors and to other Data Fiduciaries with whom the
+    data was shared?
+  test_procedure: "Re-performance: submit a correction request and trace propagation to downstream systems and third-party recipients."
+  evidence_expected:
+    - "Correction procedure and fulfilment records with elapsed times"
+    - "Evidence of propagation to processors and onward recipients"
+    - "Self-service correction capability where practicable"
+  scoring:
+    "0": "No correction mechanism exists."
+    "2": "Corrections are made in the primary system but do not propagate to processors, downstream systems or prior recipients."
+    "4": "Corrections are actioned within the prescribed period and demonstrably propagate to every downstream consumer and prior recipient, with self-service available where practicable."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+
+- id: RGT-03
+  domain: RGT
+  title: "Right to erasure on request"
+  obligation: >-
+    A Data Principal has the right to erasure of personal data, and on such a
+    request the Data Fiduciary must erase unless retention is necessary for the
+    specified purpose or for compliance with any law.
+  act_ref: "s.12(3), DPDP Act, 2023"
+  rule_slot: RIGHTS_REQUEST_HANDLING
+  audit_question: >-
+    Is erasure on request actioned across all stores, with refusals confined to
+    genuine legal retention requirements and explained to the Data Principal?
+  test_procedure: "Re-performance: submit an erasure request and verify removal across stores; inspect the refusal log and test the justifications recorded."
+  evidence_expected:
+    - "Erasure request procedure and fulfilment records"
+    - "Verification of removal across all identified stores"
+    - "Refusal log with specific legal justification per refusal"
+  scoring:
+    "0": "Erasure requests are not actioned, or are refused as a matter of course."
+    "2": "Requests are actioned in the primary system only, or refusals cite general business need rather than a specific legal retention requirement."
+    "4": "Erasure is actioned and verified across all stores within the prescribed period, and each refusal cites a specific legal basis and is communicated to the Data Principal."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: RGT-04
+  domain: RGT
+  title: "Right to nominate"
+  obligation: >-
+    A Data Principal has the right to nominate, in the prescribed manner, any other
+    individual to exercise their rights under the Act in the event of the Data
+    Principal's death or incapacity.
+  act_ref: "s.14, DPDP Act, 2023"
+  rule_slot: NOMINATION
+  audit_question: >-
+    Is there a working mechanism for a Data Principal to nominate another
+    individual, and a procedure for that nominee to be verified and to exercise
+    rights when the trigger event occurs?
+  test_procedure: "Inspect the nomination mechanism and the nominee verification procedure; test that nomination records are retrievable and actionable."
+  evidence_expected:
+    - "Nomination capture mechanism accessible to Data Principals"
+    - "Nominee verification and rights-exercise procedure"
+    - "Retrievable nomination records"
+  scoring:
+    "0": "No nomination mechanism exists and the right is not mentioned to Data Principals."
+    "2": "Nomination is accepted informally or by correspondence, with no defined verification procedure for the nominee or trigger-event handling."
+    "4": "A structured nomination mechanism is available and publicised, records are retrievable, and a documented procedure governs nominee verification and rights exercise on death or incapacity."
+  severity: medium
+  weight: 0.9
+  penalty_entry: 7
+
+- id: RGT-05
+  domain: RGT
+  title: "Identity verification proportionate and non-obstructive"
+  obligation: >-
+    Rights must be exercisable in the prescribed manner. Verification of the
+    requester's identity is legitimate, but requirements that exceed what is
+    necessary operate as an obstruction to the exercise of a statutory right and
+    themselves involve collecting further personal data.
+  act_ref: "s.11, s.12, s.13 read with s.6(1), DPDP Act, 2023"
+  rule_slot: RIGHTS_REQUEST_HANDLING
+  audit_question: >-
+    Is identity verification proportionate to the sensitivity of the request, or
+    does it demand documentation the entity does not already hold — a scanned
+    identity document from a user who registered with an email address?
+  test_procedure: "Inspect verification requirements per request type; assess proportionality and whether verification collects data beyond what is held."
+  evidence_expected:
+    - "Documented verification standard, tiered by request sensitivity"
+    - "Evidence that verification uses existing authenticated channels where available"
+    - "Absence of requirements to submit new identity documents without cause"
+  scoring:
+    "0": "Verification is either absent, creating a security exposure, or so onerous that requests are effectively defeated."
+    "2": "Verification is applied uniformly regardless of request sensitivity, and sometimes requires new identity documentation from already-authenticated users."
+    "4": "Verification is tiered by sensitivity, leverages existing authenticated sessions where available, collects no more than necessary, and is documented and consistently applied."
+  severity: medium
+  weight: 1.0
+  penalty_entry: 7
+
+- id: RGT-06
+  domain: RGT
+  title: "Rights request logging, tracking and service levels"
+  obligation: >-
+    Demonstrating compliance with rights obligations requires a record of requests
+    received, actions taken and time to completion.
+  act_ref: "s.8(1), s.11, s.12, s.13, DPDP Act, 2023"
+  rule_slot: RIGHTS_REQUEST_HANDLING
+  audit_question: >-
+    Are all rights requests logged in a single register with type, receipt date,
+    action taken and completion date, and is performance against the prescribed
+    period monitored and reported?
+  test_procedure: "Inspect the register for completeness; reconcile against inbound channels to detect requests received but never logged; test elapsed times."
+  evidence_expected:
+    - "Consolidated rights request register across every inbound channel"
+    - "Elapsed-time metrics against the prescribed period"
+    - "Reporting of breaches of service level and their remediation"
+  scoring:
+    "0": "No register. Requests arrive through scattered channels and are handled without record."
+    "2": "A register exists for the dedicated privacy channel but misses requests arriving through support, social media or account managers; elapsed times are not measured."
+    "4": "A single register captures requests from every channel following reconciliation, elapsed times are measured against the prescribed period, and overruns are reported and remediated."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+
+# -----------------------------------------------------------------------------
+# GRV — GRIEVANCE REDRESSAL
+# -----------------------------------------------------------------------------
+
+- id: GRV-01
+  domain: GRV
+  title: "Effective grievance redressal mechanism established"
+  obligation: >-
+    A Data Fiduciary must establish an effective mechanism to redress the
+    grievances of Data Principals.
+  act_ref: "s.8(9), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is there a dedicated grievance mechanism that is reachable, staffed and
+    capable of resolving substantive data protection complaints — as distinct from
+    a general customer support queue?
+  test_procedure: "Inspect the mechanism design and staffing; re-perform by lodging a substantive grievance and following it to resolution."
+  evidence_expected:
+    - "Documented grievance procedure with defined ownership and escalation"
+    - "Evidence of staffing and of competence to resolve data protection matters"
+    - "Test grievance followed end to end with outcome recorded"
+  scoring:
+    "0": "No grievance mechanism, or complaints are routed into general support with no privacy competence or escalation."
+    "2": "A mechanism exists but is under-resourced, lacks escalation, or resolves matters superficially without addressing the underlying processing issue."
+    "4": "A dedicated, resourced mechanism with defined ownership and escalation resolves matters substantively, and end-to-end testing confirms effectiveness."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: GRV-02
+  domain: GRV
+  title: "Response within the prescribed period"
+  obligation: >-
+    A Data Principal has the right to readily available means of grievance
+    redressal, and the Data Fiduciary must respond to a grievance within such
+    period as may be prescribed.
+  act_ref: "s.13(1), s.13(2), DPDP Act, 2023"
+  rule_slot: GRIEVANCE_RESPONSE_PERIOD
+  audit_question: >-
+    Is the prescribed response period known, configured into the workflow as a
+    service level, and met in practice — with performance measured rather than
+    asserted?
+  test_procedure: "Inspect service level configuration and performance data; test a sample of closed grievances for actual elapsed time."
+  evidence_expected:
+    - "Service level configured to the prescribed period with automated escalation"
+    - "Performance data showing distribution of response times"
+    - "Root-cause analysis for overruns"
+  scoring:
+    "0": "No service level. Response times are neither targeted nor measured."
+    "2": "A service level exists but is internally chosen rather than aligned to the prescribed period, and performance is measured only in aggregate."
+    "4": "The service level matches the prescribed period, is enforced by automated escalation, performance is measured at request level, and overruns are root-caused."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: GRV-03
+  domain: GRV
+  title: "Grievance mechanism readily available and publicised"
+  obligation: >-
+    The means of grievance redressal must be readily available to the Data
+    Principal, who must exhaust the opportunity so provided before approaching the
+    Board.
+  act_ref: "s.13(1), s.13(3), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Can a Data Principal find the grievance route without difficulty from any
+    surface on which they interact with the entity, and is it published alongside
+    the section 8(8) contact details?
+  test_procedure: "Observation: attempt to locate the grievance route as a naive user from each surface, recording steps required."
+  evidence_expected:
+    - "Grievance route published on website, app, notice and communications"
+    - "Step count to locate the route from each surface"
+    - "Consistency of the route published across surfaces"
+  scoring:
+    "0": "The grievance route is not published; a Data Principal could not find it."
+    "2": "It is published but hard to locate, or inconsistent across surfaces so different channels give different routes."
+    "4": "The route is prominently and consistently published on every surface, discoverable in a small number of steps, and aligned with the published contact details."
+  severity: medium
+  weight: 1.0
+  penalty_entry: 7
+
+- id: GRV-04
+  domain: GRV
+  title: "Grievance trend analysis feeding remediation"
+  obligation: >-
+    An effective mechanism under section 8(9) implies more than case handling: the
+    entity must be capable of identifying and addressing the systemic causes that
+    generate grievances.
+  act_ref: "s.8(9), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Are grievances categorised and analysed for root cause, with systemic issues
+    escalated into the remediation plan rather than each case being closed in
+    isolation?
+  test_procedure: "Inspect grievance categorisation and trend reporting; test whether identified systemic issues resulted in a change."
+  evidence_expected:
+    - "Categorisation taxonomy and trend reports"
+    - "Root-cause analyses for recurring categories"
+    - "Evidence of process or system changes traceable to grievance trends"
+  scoring:
+    "0": "Grievances are closed individually with no categorisation or analysis."
+    "2": "Volumes are reported but not root-caused, so recurring issues persist across periods without structural fix."
+    "4": "Grievances are categorised and root-caused, trends are reported to the governance forum, and there is evidence of systemic changes made in response."
+  severity: low
+  weight: 0.8
+  penalty_entry: null

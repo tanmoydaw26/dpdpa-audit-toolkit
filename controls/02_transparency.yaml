@@ -1,0 +1,525 @@
+# =============================================================================
+# DPDPA CONTROL LIBRARY — 02: TRANSPARENCY & LAWFUL BASIS
+# Domains: NOT (Notice), CON (Consent), CMG (Consent Manager), LGU (Legitimate Uses)
+# Schema documented in 01_foundation.yaml
+# =============================================================================
+
+controls:
+
+# -----------------------------------------------------------------------------
+# NOT — NOTICE
+# -----------------------------------------------------------------------------
+
+- id: NOT-01
+  domain: NOT
+  title: "Notice accompanies or precedes every consent request"
+  obligation: >-
+    Every request for consent must be accompanied or preceded by a notice
+    informing the Data Principal of the personal data to be processed and the
+    purpose of processing.
+  act_ref: "s.5(1)(i), DPDP Act, 2023"
+  rule_slot: NOTICE_CONTENT
+  audit_question: >-
+    At every consent collection point, is a notice presented at or before the
+    moment of consent — as distinct from a hyperlink to a privacy policy sitting
+    beside a pre-ticked box?
+  test_procedure: "Observation: walk every consent journey — web, app, offline, telephonic, partner-led — and record what is presented at the moment of consent."
+  evidence_expected:
+    - "Screenshots or recordings of each consent journey showing notice placement"
+    - "Inventory of all consent collection points including offline and partner channels"
+    - "Notice text as presented, not merely the policy it links to"
+  scoring:
+    "0": "No notice at the point of consent; reliance on a privacy policy link or on nothing at all."
+    "2": "Notice is present on primary digital journeys but absent or inadequate on secondary channels — offline forms, call centre scripts, partner-led onboarding."
+    "4": "A compliant notice is presented at or before consent on every channel, with an inventory demonstrating completeness and periodic re-walking of journeys to confirm."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: NOT-02
+  domain: NOT
+  title: "Notice content — itemised data and specified purpose"
+  obligation: >-
+    The notice must inform the Data Principal of the personal data proposed to be
+    processed and the purpose of such processing.
+  act_ref: "s.5(1)(i), DPDP Act, 2023"
+  rule_slot: NOTICE_CONTENT
+  audit_question: >-
+    Does the notice itemise the actual categories of personal data and state
+    specific purposes, or does it use open-ended formulations such as
+    "information you provide" and "to improve our services"?
+  test_procedure: "Inspect notice text against the processing register; test whether every category and purpose in the register appears in the notice and vice versa."
+  evidence_expected:
+    - "Notice text with itemised data categories and specific purposes"
+    - "Reconciliation of notice content to the processing register"
+    - "Absence of catch-all purpose language"
+  scoring:
+    "0": "Notice is generic, describing neither specific data categories nor specific purposes."
+    "2": "Principal categories and purposes are described but catch-all language remains, or the notice does not reconcile to the processing register."
+    "4": "Notice itemises data categories and states each purpose specifically, reconciles to the register in both directions, and is updated when processing changes."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: NOT-03
+  domain: NOT
+  title: "Notice explains rights and the route to the Board"
+  obligation: >-
+    The notice must inform the Data Principal of the manner in which they may
+    exercise their rights to withdraw consent and to grievance redressal, and of
+    the manner in which a complaint may be made to the Data Protection Board.
+  act_ref: "s.5(1)(ii), s.5(1)(iii), DPDP Act, 2023"
+  rule_slot: NOTICE_CONTENT
+  audit_question: >-
+    Does the notice explain, in operative terms, how to withdraw consent, how to
+    seek grievance redressal, and how to complain to the Board — including the
+    fact that the grievance mechanism must be exhausted first?
+  test_procedure: "Inspect notice text for each of the three disclosures; test that the mechanisms described actually work as stated."
+  evidence_expected:
+    - "Notice text covering withdrawal, grievance redressal and complaint to the Board"
+    - "Working links or contact routes for each"
+    - "Consistency between what the notice describes and the operative mechanism"
+  scoring:
+    "0": "None of the three disclosures is made."
+    "2": "Rights are mentioned in general terms but the manner of exercise is not operative — no working link, no address, or a described route that does not function."
+    "4": "All three are disclosed with operative, tested routes, and the notice correctly explains the sequencing of grievance redressal before approach to the Board."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+- id: NOT-04
+  domain: NOT
+  title: "Notice available in English and Eighth Schedule languages"
+  obligation: >-
+    The Data Principal must be given the option to access the notice in English or
+    any language specified in the Eighth Schedule to the Constitution of India.
+  act_ref: "s.5(3), DPDP Act, 2023"
+  rule_slot: NOTICE_CONTENT
+  audit_question: >-
+    Is the notice actually available in English and in Eighth Schedule languages,
+    with a discoverable language selector — and are the translations accurate
+    rather than machine-rendered approximations of legal effect?
+  test_procedure: "Observation: locate and exercise the language option on each surface; inspect translation provenance and review process."
+  evidence_expected:
+    - "Notice published in English plus Eighth Schedule languages"
+    - "Discoverable language selection mechanism on each surface"
+    - "Translation review or certification records"
+  scoring:
+    "0": "Notice is available in English only, or in English plus an unreviewed machine translation."
+    "2": "Some languages are offered but coverage is partial, the selector is hard to find, or translations are unreviewed machine output."
+    "4": "The option is genuinely available and discoverable across surfaces, translations are reviewed for legal accuracy, and version control keeps every language aligned when the notice changes."
+  severity: medium
+  weight: 1.0
+  penalty_entry: 7
+
+- id: NOT-05
+  domain: NOT
+  title: "Retrospective notice for pre-commencement consent"
+  obligation: >-
+    Where personal data is processed on the basis of consent given before the
+    commencement of the Act, the Data Fiduciary must, as soon as reasonably
+    practicable, give the Data Principal a notice compliant with the Act's
+    requirements. Processing may continue until consent is withdrawn.
+  act_ref: "s.5(2), DPDP Act, 2023"
+  rule_slot: NOTICE_CONTENT
+  audit_question: >-
+    Has the entity identified its pre-commencement consent population and issued
+    compliant retrospective notice to it, with evidence of despatch and of
+    handling the withdrawals that follow?
+  test_procedure: "Inspect the identified population and despatch evidence; test a sample of records for whether notice was in fact issued and what followed."
+  evidence_expected:
+    - "Identification of the pre-commencement Data Principal population"
+    - "Notice content issued retrospectively and despatch records"
+    - "Handling of withdrawals arising from the exercise"
+  scoring:
+    "0": "The pre-commencement population has not been identified and no retrospective notice has been issued."
+    "2": "The population is identified and notice issued to part of it, with gaps for dormant records or channels where contact details are stale."
+    "4": "The full population is identified, compliant notice is evidenced as despatched, coverage gaps are documented with rationale, and resulting withdrawals were processed and evidenced."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+  applicability:
+    requires: [has_pre_commencement_data]
+
+# -----------------------------------------------------------------------------
+# CON — CONSENT
+# -----------------------------------------------------------------------------
+
+- id: CON-01
+  domain: CON
+  title: "Consent is free, specific, informed, unconditional and unambiguous"
+  obligation: >-
+    Consent must be free, specific, informed, unconditional and unambiguous with a
+    clear affirmative action, signifying agreement to processing of the personal
+    data for the specified purpose.
+  act_ref: "s.6(1), DPDP Act, 2023"
+  rule_slot: CONSENT_REQUEST_FORM
+  audit_question: >-
+    Does each consent involve a clear affirmative action — no pre-ticked boxes, no
+    consent inferred from continued use, no consent bundled across unrelated
+    purposes into a single acceptance?
+  test_procedure: "Observation and re-performance: complete each consent journey and record the mechanism; inspect the stored artefact to confirm it reflects an affirmative act."
+  evidence_expected:
+    - "Consent interface showing unticked, separate, affirmative controls"
+    - "Absence of consent inferred from silence, inactivity or continued use"
+    - "Separate consent per distinct purpose"
+  scoring:
+    "0": "Consent is bundled, pre-ticked, or inferred from continued use of the service."
+    "2": "Affirmative action is required for an overall acceptance, but purposes remain bundled so the Data Principal cannot agree to one and decline another."
+    "4": "Each distinct purpose has its own unticked affirmative control, no consent is inferred from inactivity, and the stored artefact records which specific purposes were agreed."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 7
+
+- id: CON-02
+  domain: CON
+  title: "Consent not conditioned on service where data is unnecessary"
+  obligation: >-
+    Consent extends only to personal data necessary for the specified purpose, and
+    is invalid to the extent it purports to go further. Consent conditioned on
+    provision of unnecessary data is not free.
+  act_ref: "s.6(1), s.6(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is access to the service made conditional on consent to processing that is not
+    necessary for delivering it — marketing, profiling, enrichment or data sharing
+    presented as unavoidable?
+  test_procedure: "Re-performance: attempt to complete onboarding declining every non-essential consent, and record whether the service remains usable."
+  evidence_expected:
+    - "Evidence that the service functions when non-essential consents are declined"
+    - "Analysis distinguishing necessary from optional processing per service"
+    - "Absence of dark patterns making refusal disproportionately difficult"
+  scoring:
+    "0": "Service access requires blanket consent covering unnecessary processing; declining is not possible."
+    "2": "Some granularity exists but at least one non-essential purpose remains effectively mandatory, or refusal is made disproportionately difficult through interface design."
+    "4": "Testing confirms the service is fully usable when every non-essential consent is declined, refusal is as easy as acceptance, and the necessary/optional split is documented."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: CON-03
+  domain: CON
+  title: "Consent request in clear and plain language with contact details"
+  obligation: >-
+    Every request for consent must be presented in clear and plain language,
+    giving the option to access it in English or an Eighth Schedule language, and
+    must provide the contact details of the Data Protection Officer or other
+    person authorised to respond on the Data Fiduciary's behalf.
+  act_ref: "s.6(3), DPDP Act, 2023"
+  rule_slot: CONSENT_REQUEST_FORM
+  audit_question: >-
+    Is the consent request written in plain language accessible to a general
+    audience, and does it carry the required contact details at the point of
+    request rather than only deep in a policy?
+  test_procedure: "Inspect consent text for readability and for contact details; assess against a plain-language standard."
+  evidence_expected:
+    - "Consent request text with contact details present at the point of request"
+    - "Readability assessment or plain-language review record"
+    - "Language options available at the point of request"
+  scoring:
+    "0": "Consent text is dense legal drafting with no contact details at the point of request."
+    "2": "Language is partially simplified but retains legal or technical formulations, or contact details appear only by onward link."
+    "4": "Consent text is demonstrably plain, reviewed against a readability standard, carries contact details in-line, and offers language options at the point of request."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+
+- id: CON-04
+  domain: CON
+  title: "Withdrawal of consent as easy as giving it"
+  obligation: >-
+    The Data Principal has the right to withdraw consent at any time, and the ease
+    of doing so must be comparable to the ease with which consent was given.
+  act_ref: "s.6(4), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Can consent be withdrawn through the same channel and with comparable effort
+    to giving it — a self-service control where consent was given in-app — or does
+    withdrawal require an email, a call, or navigating to an obscure setting?
+  test_procedure: "Re-performance: withdraw consent through each available route, counting steps and elapsed time, and compare against the steps to give it."
+  evidence_expected:
+    - "Self-service withdrawal control on the same surface as collection"
+    - "Step-count comparison between giving and withdrawing"
+    - "Evidence of withdrawals actually processed end to end"
+  scoring:
+    "0": "No withdrawal mechanism, or withdrawal only by writing to a general inbox where consent was given in one click."
+    "2": "A withdrawal route exists but is materially harder than giving consent — more steps, a different channel, or a manual handoff introducing delay."
+    "4": "Withdrawal is available on the same surface with comparable effort, tested end to end, and the step-count comparison is documented."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: CON-05
+  domain: CON
+  title: "Consequences of withdrawal disclosed and borne by the Data Principal"
+  obligation: >-
+    The Data Principal bears the consequences of withdrawal of consent, and those
+    consequences must be made known. Withdrawal does not affect the legality of
+    processing carried out before it.
+  act_ref: "s.6(5), s.6(6), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Are the consequences of withdrawal explained accurately at the point of
+    withdrawal — neither understated nor exaggerated into a deterrent?
+  test_procedure: "Inspect withdrawal interface text; assess whether stated consequences are accurate and proportionate rather than discouraging."
+  evidence_expected:
+    - "Withdrawal interface text describing actual consequences"
+    - "Verification that stated consequences match what technically follows"
+    - "Absence of deterrent framing or exaggerated warnings"
+  scoring:
+    "0": "Consequences are not disclosed at all, or withdrawal silently degrades the service."
+    "2": "Consequences are disclosed but inaccurately or in deterrent terms designed to discourage withdrawal."
+    "4": "Consequences are accurately and neutrally stated, verified against what technically occurs, and free of deterrent framing."
+  severity: medium
+  weight: 1.0
+  penalty_entry: 7
+
+- id: CON-06
+  domain: CON
+  title: "Processing ceases within a reasonable time of withdrawal"
+  obligation: >-
+    On withdrawal of consent, the Data Fiduciary must, within a reasonable time,
+    cease processing the personal data unless such processing without consent is
+    required or authorised by law, and must cause its Data Processors to cease as
+    well.
+  act_ref: "s.6(6), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    How long after withdrawal does processing actually stop, across all systems
+    including analytics, marketing platforms, warehouses and processors — and is
+    that interval measured rather than assumed?
+  test_procedure: "Re-performance: withdraw consent for a test record and trace it across every downstream system, measuring elapsed time to cessation in each."
+  evidence_expected:
+    - "Measured cessation times across primary, secondary and vendor systems"
+    - "Propagation mechanism from the consent store to downstream consumers"
+    - "Exception log for systems where cessation is delayed or manual"
+  scoring:
+    "0": "Withdrawal is recorded but processing continues; there is no propagation to downstream systems."
+    "2": "Cessation occurs in primary systems but downstream platforms — marketing tools, warehouses, processors — continue processing until a periodic sync, with the interval unmeasured."
+    "4": "Withdrawal propagates to every consumer including processors within a measured and documented interval, exceptions are logged and owned, and tracing a test record confirms end-to-end cessation."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: CON-07
+  domain: CON
+  title: "Consent artefacts retained and provable"
+  obligation: >-
+    Where a question arises as to whether notice was given and consent obtained in
+    accordance with the Act, the Data Fiduciary bears the burden of proving it.
+  act_ref: "s.6(10), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    For a given Data Principal, can the entity produce a tamper-evident record of
+    what was consented to, when, through what interface, and against which version
+    of the notice?
+  test_procedure: "Re-performance: select three Data Principals at random and require production of the full consent artefact including notice version and interface reference."
+  evidence_expected:
+    - "Consent records capturing timestamp, purpose set, interface, notice version"
+    - "Tamper-evidence or immutability controls over the consent store"
+    - "Successful retrieval for randomly selected individuals"
+  scoring:
+    "0": "No consent records are retained, or only a boolean flag with no purpose, timestamp or notice version."
+    "2": "Records exist with timestamp and purpose but omit the notice version or interface, so the artefact cannot be tied to what was actually presented."
+    "4": "Complete, tamper-evident artefacts capture purpose set, timestamp, interface and notice version, are retrievable on demand for any individual, and testing confirms retrieval."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 7
+
+- id: CON-08
+  domain: CON
+  title: "Consent refresh on material change of purpose"
+  obligation: >-
+    Consent is specific to the purpose for which it was given. A material change
+    in purpose requires fresh notice and fresh consent; it cannot be effected by
+    amending a policy.
+  act_ref: "s.5(1), s.6(1), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    When purposes change materially, is fresh consent obtained — or is the change
+    implemented by updating the privacy policy and treating continued use as
+    acceptance?
+  test_procedure: "Inspect the change history of purposes and the corresponding consent events; test whether recent material changes triggered re-consent."
+  evidence_expected:
+    - "Change log of processing purposes with materiality assessment"
+    - "Re-consent campaigns tied to material changes"
+    - "Evidence that continued use is not treated as consent to new purposes"
+  scoring:
+    "0": "Purpose changes are effected by policy update alone; continued use is treated as consent."
+    "2": "Material changes are recognised and sometimes trigger re-consent, but the materiality test is undocumented and applied inconsistently."
+    "4": "A documented materiality test governs whether re-consent is required, is consistently applied with evidence of re-consent campaigns, and continued use is never treated as agreement to new purposes."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+
+# -----------------------------------------------------------------------------
+# CMG — CONSENT MANAGER
+# -----------------------------------------------------------------------------
+
+- id: CMG-01
+  domain: CMG
+  title: "Consent Manager relied upon is registered with the Board"
+  obligation: >-
+    A Data Principal may give, manage, review and withdraw consent through a
+    Consent Manager, which must be registered with the Board and must act on
+    behalf of and be accountable to the Data Principal.
+  act_ref: "s.6(7), s.6(8), DPDP Act, 2023"
+  rule_slot: CONSENT_MANAGER_REGISTRATION
+  audit_question: >-
+    Where consent is received via a Consent Manager, has the entity verified that
+    intermediary's registration with the Board, and does it re-verify periodically?
+  test_procedure: "Inspect verification records against the Board's register of Consent Managers; enquire as to the re-verification cycle."
+  evidence_expected:
+    - "Registration verification evidence for each Consent Manager relied upon"
+    - "Contractual terms addressing registration status and notification of change"
+    - "Periodic re-verification records"
+  scoring:
+    "0": "A Consent Manager is relied upon with no verification of registration status."
+    "2": "Registration was verified at onboarding but is not re-verified, and the contract is silent on loss of registration."
+    "4": "Registration is verified at onboarding and periodically thereafter, the contract requires immediate notification of any change in status, and a contingency exists for withdrawal of registration."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+  applicability:
+    requires: [uses_consent_manager]
+
+- id: CMG-02
+  domain: CMG
+  title: "Consent Manager interface integrity and record reconciliation"
+  obligation: >-
+    Reliance on a Consent Manager does not displace the Data Fiduciary's own
+    accountability under section 8(1) or its burden of proof under section 6(10).
+  act_ref: "s.6(7), s.6(10), s.8(1), DPDP Act, 2023"
+  rule_slot: CONSENT_MANAGER_OBLIGATIONS
+  audit_question: >-
+    Are consent records received from the Consent Manager reconciled against the
+    entity's own processing, so that a withdrawal registered with the intermediary
+    reliably reaches and halts the entity's systems?
+  test_procedure: "Re-performance: register a withdrawal through the Consent Manager and trace propagation into the entity's systems; inspect reconciliation controls and exception handling."
+  evidence_expected:
+    - "Integration design and reconciliation controls between the intermediary and internal consent state"
+    - "Exception reports for failed or delayed synchronisation"
+    - "End-to-end test evidence for a withdrawal originating at the intermediary"
+  scoring:
+    "0": "No reconciliation. The entity assumes the intermediary's records are authoritative and acts only when notified."
+    "2": "Reconciliation is periodic and manual, with synchronisation failures detected late or not at all."
+    "4": "Automated reconciliation with exception alerting is in place, withdrawal propagation is tested end to end, and the entity retains its own provable consent state."
+  severity: high
+  weight: 1.1
+  penalty_entry: 7
+  applicability:
+    requires: [uses_consent_manager]
+
+- id: CMG-03
+  domain: CMG
+  title: "Own registration and obligations where acting as a Consent Manager"
+  obligation: >-
+    An entity acting as a Consent Manager must be registered with the Board,
+    subject to prescribed conditions, and must discharge the obligations of that
+    role including accountability to the Data Principal.
+  act_ref: "s.6(8), s.6(9), DPDP Act, 2023"
+  rule_slot: CONSENT_MANAGER_OBLIGATIONS
+  audit_question: >-
+    If the entity itself acts as a Consent Manager, is it registered, does it meet
+    the prescribed conditions on a continuing basis, and can it evidence
+    accountability to Data Principals rather than to the Data Fiduciaries paying it?
+  test_procedure: "Inspect registration, continuing compliance with prescribed conditions, and the operational independence of the Data Principal-facing function."
+  evidence_expected:
+    - "Certificate or evidence of registration with the Board"
+    - "Continuing compliance monitoring against the prescribed conditions"
+    - "Governance evidencing accountability to Data Principals, including conflict management"
+  scoring:
+    "0": "Operating as a Consent Manager without registration, or without having assessed whether the role is being performed."
+    "2": "Registered, but continuing compliance with prescribed conditions is not monitored, and accountability to Data Principals is asserted rather than evidenced."
+    "4": "Registered, with continuing compliance actively monitored, and demonstrable governance — including conflict-of-interest management — establishing accountability to Data Principals."
+  severity: critical
+  weight: 1.2
+  penalty_entry: 7
+  applicability:
+    requires: [is_consent_manager]
+
+# -----------------------------------------------------------------------------
+# LGU — LEGITIMATE USES
+# -----------------------------------------------------------------------------
+
+- id: LGU-01
+  domain: LGU
+  title: "Legitimate use relied upon is a specific statutory limb"
+  obligation: >-
+    Processing without consent is permitted only for the certain legitimate uses
+    enumerated in section 7. The list is closed; there is no general balancing or
+    legitimate-interests ground.
+  act_ref: "s.7, DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    For every activity proceeding without consent, is the specific section 7 limb
+    identified and defensible — and has the entity avoided importing a
+    legitimate-interests analysis from another regime?
+  test_procedure: "Inspect the basis register; re-perform the analysis for each legitimate use relied upon, testing the fit against the statutory wording."
+  evidence_expected:
+    - "Identification of the specific limb, by sub-clause, for each activity"
+    - "Written analysis of why the activity falls within it"
+    - "Absence of reliance on a general balancing test"
+  scoring:
+    "0": "Processing proceeds without consent on an unstated basis, or on a legitimate-interests rationale that has no counterpart in the Act."
+    "2": "A limb is cited but the analysis is thin or strained, stretching the provision to cover commercially convenient processing."
+    "4": "Each reliance cites a specific sub-clause with a documented, defensible analysis, reviewed by legal, and reliance is narrowly confined to what the limb actually authorises."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 7
+
+- id: LGU-02
+  domain: LGU
+  title: "Employment-purposes limb correctly scoped"
+  obligation: >-
+    Processing is a legitimate use where it is necessary for purposes of
+    employment, or those related to safeguarding the employer from loss or
+    liability, such as prevention of corporate espionage, maintenance of
+    confidentiality of trade secrets or intellectual property, or provision of any
+    service or benefit sought by an employee.
+  act_ref: "s.7(i), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Where employee data is processed under section 7(i), is each use necessary for
+    employment or for safeguarding against loss or liability — and does the entity
+    avoid treating the limb as blanket authority for all employee monitoring?
+  test_procedure: "Inspect employee data processing inventory; test each monitoring or analytics use against the necessity standard in the limb."
+  evidence_expected:
+    - "Inventory of employee data processing with the limb mapped per use"
+    - "Necessity analysis for monitoring, productivity analytics and surveillance"
+    - "Employee-facing transparency documentation"
+  scoring:
+    "0": "All employee data processing is assumed lawful without analysis by virtue of the employment relationship."
+    "2": "The limb is mapped at a high level but intrusive uses — location tracking, communications monitoring, productivity scoring — are not individually justified against the necessity standard."
+    "4": "Each use is mapped to the limb with a documented necessity analysis, intrusive monitoring is separately justified and proportionate, and employees are informed."
+  severity: high
+  weight: 1.2
+  penalty_entry: 7
+  applicability:
+    requires: [processes_employee_data]
+
+- id: LGU-03
+  domain: LGU
+  title: "Voluntary provision limb not over-extended"
+  obligation: >-
+    Processing is a legitimate use where the Data Principal has voluntarily
+    provided personal data for a specified purpose and has not indicated
+    objection, but only for that purpose.
+  act_ref: "s.7(a), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Where the voluntary-provision limb is relied upon, is processing confined to
+    the specific purpose for which the data was volunteered, and is there a
+    working mechanism for the Data Principal to object?
+  test_procedure: "Inspect the activities relying on this limb; test whether processing extends beyond the volunteered purpose and whether objection is operable."
+  evidence_expected:
+    - "Identification of the purpose for which data was volunteered, per activity"
+    - "Controls confining processing to that purpose"
+    - "Operable objection mechanism with evidence of objections honoured"
+  scoring:
+    "0": "The limb is used as a general basis for processing data the individual happened to provide, with no purpose confinement and no objection route."
+    "2": "Purpose is identified but confinement is weak — volunteered data flows into marketing or analytics — or the objection mechanism is undocumented."
+    "4": "Processing is technically and procedurally confined to the volunteered purpose, an operable objection mechanism exists, and objections are evidenced as honoured."
+  severity: medium
+  weight: 1.0
+  penalty_entry: 7

@@ -1,0 +1,418 @@
+# =============================================================================
+# DPDPA CONTROL LIBRARY — 06: SPECIAL CATEGORIES & ENFORCEMENT
+# Domains: CHD (Children & Persons with Disability), SDF (Significant Data
+#          Fiduciary), BRD (Enforcement Readiness)
+# Schema documented in 01_foundation.yaml
+# =============================================================================
+
+controls:
+
+# -----------------------------------------------------------------------------
+# CHD — CHILDREN & PERSONS WITH DISABILITY
+# -----------------------------------------------------------------------------
+# The age threshold under the Act is below EIGHTEEN years. Global platforms are
+# commonly engineered to a 13-16 threshold, so an imported control set will
+# under-protect a substantial cohort. Penalty exposure is up to INR 200 crore.
+# -----------------------------------------------------------------------------
+
+- id: CHD-01
+  domain: CHD
+  title: "Age determination and identification of child users"
+  obligation: >-
+    A child means an individual who has not completed eighteen years of age.
+    Obligations in relation to children attach to the processing of a child's
+    personal data, which presupposes the ability to identify such data.
+  act_ref: 's.2, DPDP Act, 2023 (definition of "child"), read with s.9(1)'
+  rule_slot: CHILD_CONSENT_VERIFICATION
+  audit_question: >-
+    How does the entity determine whether a user is under eighteen? Is the
+    threshold set at eighteen rather than at a lower age imported from another
+    jurisdiction, and is there a response where age is unknown or misstated?
+  test_procedure: "Inspect the age determination mechanism and the threshold configured; test the treatment of users of unknown age and the response to indications of misstatement."
+  evidence_expected:
+    - "Age determination mechanism with the threshold set at eighteen"
+    - "Documented treatment of users whose age is unknown"
+    - "Procedure for responding to signals that age was misstated"
+  scoring:
+    "0": "Age is not determined at all, or the threshold is set below eighteen following another jurisdiction's standard."
+    "2": "Age is collected and the threshold is correct, but self-declaration is accepted with no response to contrary signals, and users of unknown age default to adult treatment."
+    "4": "The threshold is eighteen, age determination is supported by proportionate signals rather than bare self-declaration, unknown-age users receive a documented default, and misstatement signals trigger review."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 3
+  applicability:
+    requires: [processes_children_data]
+
+- id: CHD-02
+  domain: CHD
+  title: "Verifiable consent of parent or lawful guardian"
+  obligation: >-
+    Before processing any personal data of a child, or of a person with a
+    disability who has a lawful guardian, the Data Fiduciary must obtain verifiable
+    consent of the parent or of such lawful guardian.
+  act_ref: "s.9(1), DPDP Act, 2023"
+  rule_slot: CHILD_CONSENT_VERIFICATION
+  audit_question: >-
+    Is parental consent verifiable — with due diligence establishing that the
+    consenting adult is identifiable and is in fact the parent or guardian — rather
+    than a tickbox asserting parental status?
+  test_procedure: "Re-performance: complete the child onboarding journey and assess what verification is actually performed; inspect the artefacts retained."
+  evidence_expected:
+    - "Verification mechanism establishing the adult's identity and their relationship to the child"
+    - "Consent artefacts linking parent identity to the specific child record"
+    - "Records demonstrating processing does not begin before consent is obtained"
+  scoring:
+    "0": "No parental consent is obtained, or a self-declared checkbox asserting parental status is treated as sufficient."
+    "2": "A parental consent flow exists and captures an adult's details, but verification does not establish identity or the parental relationship, and processing sometimes begins before consent completes."
+    "4": "Verification establishes both the adult's identity and the guardian relationship through proportionate means, artefacts link parent to child record, and processing demonstrably does not begin until consent is complete."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 3
+  applicability:
+    requires: [processes_children_data]
+
+- id: CHD-03
+  domain: CHD
+  title: "No tracking, behavioural monitoring or targeted advertising to children"
+  obligation: >-
+    A Data Fiduciary must not undertake tracking or behavioural monitoring of
+    children, or targeted advertising directed at children.
+  act_ref: "s.9(3), DPDP Act, 2023"
+  rule_slot: CHILD_EXEMPT_CLASSES
+  audit_question: >-
+    Are tracking, behavioural profiling and targeted advertising technically
+    disabled for users identified as children — including third-party tags,
+    advertising SDKs and analytics that profile behaviour?
+  test_procedure: "Re-performance: instrument a child-flagged test account and inspect outbound requests, cookies, SDK activity and advertising identifiers."
+  evidence_expected:
+    - "Technical suppression of tracking, profiling and ad targeting for child accounts"
+    - "Test evidence from a child-flagged account showing no profiling calls"
+    - "Contractual and technical controls over advertising and analytics SDKs"
+  scoring:
+    "0": "Children are tracked and targeted identically to adults; no suppression exists."
+    "2": "Advertising targeting is suppressed but behavioural analytics, personalisation or third-party SDKs continue to profile child users, or suppression is policy-based rather than technically enforced."
+    "4": "Tracking, behavioural monitoring and targeted advertising are technically suppressed for child accounts across first and third-party components, verified by instrumented testing."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 3
+  applicability:
+    requires: [processes_children_data]
+  note: >-
+    This prohibition is not curable by consent. Parental consent does not
+    authorise tracking or targeted advertising directed at a child.
+
+- id: CHD-04
+  domain: CHD
+  title: "No processing likely to cause detrimental effect on a child's wellbeing"
+  obligation: >-
+    A Data Fiduciary must not undertake processing of personal data that is likely
+    to cause any detrimental effect on the wellbeing of a child.
+  act_ref: "s.9(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Has the entity assessed whether any processing affecting children is likely to
+    have a detrimental effect on their wellbeing — including engagement
+    optimisation, recommendation systems and features designed to extend session
+    time?
+  test_procedure: "Inspect wellbeing impact assessments for child-affecting features; test whether engagement-optimising mechanics were assessed and, where necessary, modified."
+  evidence_expected:
+    - "Wellbeing impact assessment covering features and algorithms affecting children"
+    - "Assessment of engagement mechanics, recommendation systems and notification design"
+    - "Evidence of features modified or withheld on wellbeing grounds"
+  scoring:
+    "0": "No assessment of detrimental effect has been undertaken."
+    "2": "Content safety is addressed but the wellbeing effects of engagement optimisation, recommendations and notification design have not been assessed."
+    "4": "Documented wellbeing assessments cover features and algorithms affecting children, are reviewed on change, and there is evidence of design changes made on wellbeing grounds."
+  severity: high
+  weight: 1.2
+  penalty_entry: 3
+  applicability:
+    requires: [processes_children_data]
+
+- id: CHD-05
+  domain: CHD
+  title: "Persons with disability having a lawful guardian"
+  obligation: >-
+    The requirement of verifiable consent extends to the personal data of a person
+    with a disability who has a lawful guardian, with consent to be obtained from
+    that guardian.
+  act_ref: "s.9(1), DPDP Act, 2023"
+  rule_slot: CHILD_CONSENT_VERIFICATION
+  audit_question: >-
+    Is there a mechanism for guardian consent where a Data Principal has a lawful
+    guardian, including verification of the guardianship and a route for a guardian
+    to identify themselves and act?
+  test_procedure: "Inspect the guardian consent mechanism and verification approach; test the route by which a guardian can come forward."
+  evidence_expected:
+    - "Guardian consent capture and verification mechanism"
+    - "Published route for a guardian to identify themselves and exercise rights"
+    - "Records linking guardian to the Data Principal"
+  scoring:
+    "0": "No mechanism exists; the obligation in respect of persons with disability has not been considered."
+    "2": "Guardian consent is handled case by case on request, with no defined verification approach or published route."
+    "4": "A defined mechanism captures and verifies guardianship, a published route lets guardians come forward, and records link guardian to Data Principal and support rights exercise."
+  severity: high
+  weight: 1.1
+  penalty_entry: 3
+
+# -----------------------------------------------------------------------------
+# SDF — SIGNIFICANT DATA FIDUCIARY OBLIGATIONS
+# -----------------------------------------------------------------------------
+# These obligations attach only on notification by the Central Government under
+# s.10(1). Where the entity is not notified, controls are excluded from scoring
+# but SDF readiness is assessed at APP-04. Penalty exposure up to INR 150 crore.
+# -----------------------------------------------------------------------------
+
+- id: SDF-01
+  domain: SDF
+  title: "Data Protection Officer appointed and based in India"
+  obligation: >-
+    A Significant Data Fiduciary must appoint a Data Protection Officer who is
+    based in India, is responsible to the board of directors or similar governing
+    body, and is the point of contact for the grievance redressal mechanism.
+  act_ref: "s.10(2)(a), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Is a DPO appointed who is genuinely based in India, reports to the board rather
+    than through a functional line that could suppress escalation, and is the
+    designated grievance contact?
+  test_procedure: "Inspect the appointment, reporting line and location; corroborate board reporting through minutes; verify the DPO is the published grievance contact."
+  evidence_expected:
+    - "Appointment letter recording India base, remit and reporting line to the board"
+    - "Board minutes evidencing direct reporting"
+    - "Published contact details identifying the DPO as grievance point of contact"
+  scoring:
+    "0": "No DPO appointed, or the role is held by a person outside India."
+    "2": "A DPO is appointed and India-based, but reports through a functional line rather than to the board, or is not the published grievance contact."
+    "4": "An India-based DPO is formally appointed with a reporting line to the board evidenced in minutes, is the published grievance contact, and has resourcing and independence to act."
+  severity: critical
+  weight: 1.4
+  penalty_entry: 4
+  applicability:
+    requires: [is_sdf]
+
+- id: SDF-02
+  domain: SDF
+  title: "Independent data auditor appointed"
+  obligation: >-
+    A Significant Data Fiduciary must appoint an independent data auditor to
+    evaluate its compliance with the provisions of the Act.
+  act_ref: "s.10(2)(b), DPDP Act, 2023"
+  rule_slot: SDF_DPIA_AUDIT
+  audit_question: >-
+    Is an independent data auditor appointed, with independence genuinely
+    established — not the same firm that designed the compliance programme — and
+    with a scope covering compliance with the Act as a whole?
+  test_procedure: "Inspect the appointment and engagement scope; assess independence including prior advisory work; review the most recent audit report and management response."
+  evidence_expected:
+    - "Appointment of an independent data auditor with engagement terms"
+    - "Independence assessment addressing prior or concurrent advisory work"
+    - "Most recent audit report with management response and remediation tracking"
+  scoring:
+    "0": "No independent data auditor has been appointed."
+    "2": "An auditor is appointed but independence is compromised by concurrent advisory work, or the scope is narrowed to security rather than compliance with the Act."
+    "4": "An independent auditor with documented independence is appointed on a scope covering the Act, reports are issued and considered by the board, and findings are tracked to closure."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 4
+  applicability:
+    requires: [is_sdf]
+
+- id: SDF-03
+  domain: SDF
+  title: "Periodic Data Protection Impact Assessment"
+  obligation: >-
+    A Significant Data Fiduciary must undertake periodic Data Protection Impact
+    Assessment, being a process comprising a description of the rights of Data
+    Principals, the purpose of processing, assessment and management of risk to
+    those rights, and such other matters as may be prescribed.
+  act_ref: "s.10(2)(c)(i), DPDP Act, 2023"
+  rule_slot: SDF_DPIA_AUDIT
+  audit_question: >-
+    Are DPIAs conducted periodically and on material change, addressing each
+    statutory element including assessment and management of risk to the rights of
+    Data Principals — and do they drive actual mitigation?
+  test_procedure: "Inspect completed DPIAs against the statutory definition; test whether identified risks resulted in mitigation and whether the periodic cycle is met."
+  evidence_expected:
+    - "DPIAs covering each element of the statutory definition"
+    - "Defined periodicity and triggers for reassessment on material change"
+    - "Evidence of risks mitigated as a result, tracked to closure"
+  scoring:
+    "0": "No DPIAs have been conducted."
+    "2": "DPIAs are conducted for new projects but omit statutory elements — commonly the assessment and management of risk to rights — or are not repeated periodically."
+    "4": "DPIAs address every statutory element, run on a defined periodic cycle and on material change, and demonstrably drive mitigation tracked to closure."
+  severity: critical
+  weight: 1.3
+  penalty_entry: 4
+  applicability:
+    requires: [is_sdf]
+
+- id: SDF-04
+  domain: SDF
+  title: "Periodic audit of compliance"
+  obligation: >-
+    A Significant Data Fiduciary must undertake periodic audit, in addition to
+    appointing an independent data auditor, as part of the additional measures
+    required of it.
+  act_ref: "s.10(2)(c), DPDP Act, 2023"
+  rule_slot: SDF_DPIA_AUDIT
+  audit_question: >-
+    Is a periodic audit of compliance performed on the prescribed cycle, with
+    results reported to the board and findings remediated?
+  test_procedure: "Inspect audit plan, completed audits and reporting; test remediation of prior findings."
+  evidence_expected:
+    - "Audit plan and completed audit reports on the prescribed cycle"
+    - "Reporting to the board or equivalent governing body"
+    - "Remediation tracking with evidence of closure"
+  scoring:
+    "0": "No periodic audit is performed."
+    "2": "Audits occur irregularly or are narrowly scoped, and prior findings remain open without escalation."
+    "4": "Audits run on the prescribed cycle with adequate scope, are reported to the board, and findings are remediated and validated."
+  severity: high
+  weight: 1.2
+  penalty_entry: 4
+  applicability:
+    requires: [is_sdf]
+
+- id: SDF-05
+  domain: SDF
+  title: "Algorithmic software due diligence"
+  obligation: >-
+    A Significant Data Fiduciary must observe such other measures as may be
+    prescribed, including due diligence to verify that algorithmic software
+    deployed by it for hosting, display, uploading, modification or transmission of
+    personal data is not likely to pose a risk to the rights of Data Principals.
+  act_ref: "s.10(2)(c), DPDP Act, 2023"
+  rule_slot: SDF_ALGORITHMIC_DUE_DILIGENCE
+  audit_question: >-
+    Is there an inventory of algorithmic systems processing personal data, with
+    documented due diligence assessing risk to the rights of Data Principals —
+    including bias, accuracy and the effect of automated decisions?
+  test_procedure: "Inspect the algorithm inventory and due diligence records; test one high-impact model for evidence of assessment and mitigation."
+  evidence_expected:
+    - "Inventory of algorithmic and machine-learning systems processing personal data"
+    - "Due diligence records assessing risk to rights, including bias and accuracy testing"
+    - "Mitigation and human review arrangements for high-impact decisions"
+  scoring:
+    "0": "No inventory and no due diligence over algorithmic systems."
+    "2": "An inventory exists and model performance is monitored technically, but risk to the rights of Data Principals — bias, contestability, effect of automated decisions — is not assessed."
+    "4": "A complete inventory is subject to documented due diligence addressing risk to rights, with bias and accuracy testing, mitigation, and human review for high-impact decisions."
+  severity: high
+  weight: 1.2
+  penalty_entry: 4
+  applicability:
+    requires: [is_sdf]
+
+- id: SDF-06
+  domain: SDF
+  title: "Transfer restrictions applicable to a Significant Data Fiduciary"
+  obligation: >-
+    Additional measures prescribed for a Significant Data Fiduciary may include
+    restrictions on the transfer outside India of specified categories of personal
+    data or of traffic and flow data.
+  act_ref: "s.10(2)(c) read with s.16, DPDP Act, 2023"
+  rule_slot: SDF_TRANSFER_RESTRICTION
+  audit_question: >-
+    Has the entity determined whether any category of personal data or traffic data
+    it holds is subject to a transfer restriction applicable to Significant Data
+    Fiduciaries, and can it evidence compliance?
+  test_procedure: "Inspect the determination and supporting analysis; reconcile against the transfer map at XBD-01."
+  evidence_expected:
+    - "Analysis of applicable transfer restrictions and the categories affected"
+    - "Reconciliation against the cross-border transfer map"
+    - "Technical controls preventing restricted transfers"
+  scoring:
+    "0": "The question has not been considered."
+    "2": "An analysis exists but has not been reconciled against actual data flows, so compliance is assumed rather than evidenced."
+    "4": "Affected categories are identified, reconciled against the transfer map, and technical controls prevent restricted transfers with monitoring for exceptions."
+  severity: high
+  weight: 1.1
+  penalty_entry: 4
+  applicability:
+    requires: [is_sdf]
+  citation_caution: >-
+    Whether any such restriction has in fact been prescribed must be confirmed
+    against the notified Rules before this control is reported as a contravention.
+
+# -----------------------------------------------------------------------------
+# BRD — ENFORCEMENT READINESS & BOARD ENGAGEMENT
+# -----------------------------------------------------------------------------
+
+- id: BRD-01
+  domain: BRD
+  title: "Capability to respond to a Board inquiry"
+  obligation: >-
+    The Board may, on receipt of a complaint or on reference, inquire into a breach
+    and may require the production of information. An entity must be able to
+    respond within the timescales the Board sets.
+  act_ref: "s.27, s.28, s.36, DPDP Act, 2023"
+  rule_slot: BOARD_PROCEEDINGS
+  audit_question: >-
+    Is there a defined procedure for receiving and responding to a communication
+    from the Board, with a named owner, legal involvement and the ability to
+    assemble evidence at short notice?
+  test_procedure: "Inspect the procedure and named owner; test evidence assembly by requiring production of a defined evidence set within a short deadline."
+  evidence_expected:
+    - "Documented procedure for handling Board communications with a named owner"
+    - "Evidence repository enabling rapid assembly of compliance artefacts"
+    - "Legal and communications escalation arrangements"
+  scoring:
+    "0": "No procedure. A communication from the Board would be handled improvised."
+    "2": "A procedure exists but evidence is dispersed across teams and systems, so assembling a coherent response would take weeks."
+    "4": "A defined procedure with a named owner is supported by an organised evidence repository, and testing confirms a complete evidence set can be assembled at short notice."
+  severity: medium
+  weight: 1.0
+  penalty_entry: null
+
+- id: BRD-02
+  domain: BRD
+  title: "Awareness of voluntary undertaking and mitigation as penalty factors"
+  obligation: >-
+    The Board may accept a voluntary undertaking at any stage after receipt of a
+    complaint, and in determining the quantum of a penalty must have regard to
+    factors including the promptness, effectiveness and timeliness of mitigating
+    action taken.
+  act_ref: "s.32, s.33(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Do those who would manage an enforcement matter understand the voluntary
+    undertaking mechanism and the section 33(2) mitigation factors, so that
+    decisions in the first days of an incident are taken with exposure in mind?
+  test_procedure: "Enquire of legal and privacy leadership; inspect any playbook addressing enforcement strategy and mitigation documentation."
+  evidence_expected:
+    - "Playbook or briefing covering voluntary undertakings and mitigation factors"
+    - "Practice of contemporaneously documenting mitigating action during incidents"
+    - "Evidence of legal involvement from the outset of incidents"
+  scoring:
+    "0": "Neither mechanism is understood; mitigation is not documented contemporaneously."
+    "2": "Awareness exists among legal counsel but is not reflected in incident practice, so mitigating action is reconstructed after the fact rather than recorded as taken."
+    "4": "Enforcement strategy is documented and understood, mitigating action is recorded contemporaneously during incidents, and legal is engaged from the outset."
+  severity: low
+  weight: 0.8
+  penalty_entry: null
+
+- id: BRD-03
+  domain: BRD
+  title: "Remediation plan owned, funded and tracked"
+  obligation: >-
+    Accountability under section 8(1), together with the treatment of mitigation as
+    a factor in penalty determination, requires that known gaps be subject to a
+    plan that is actually resourced and progressed.
+  act_ref: "s.8(1), s.33(2), DPDP Act, 2023"
+  rule_slot: null
+  audit_question: >-
+    Are identified compliance gaps captured in a single plan with named owners,
+    dates and funding, and is progress reported and enforced — or does the plan
+    exist as a document that no one is measured against?
+  test_procedure: "Inspect the remediation plan and progress reporting; test a sample of items for evidence of actual progress against the recorded dates."
+  evidence_expected:
+    - "Consolidated remediation plan with owners, dates, funding and status"
+    - "Progress reporting to the governance forum"
+    - "Evidence of items completed and of overdue items escalated"
+  scoring:
+    "0": "No consolidated plan. Gaps are known informally and progressed opportunistically."
+    "2": "A plan exists with owners and dates but is not funded, or dates slip repeatedly without escalation or replanning."
+    "4": "A funded plan with named owners and dates is reported to governance, completions are evidenced, and overdue items are escalated and replanned deliberately."
+  severity: high
+  weight: 1.1
+  penalty_entry: null
